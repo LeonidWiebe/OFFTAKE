@@ -1,0 +1,117 @@
+позиции сортамента, которые есть в позициях, но отсутствуют в сортаменте
+=====================================================================================
+
+SELECT     dbo.position.partID, dbo.position.posID, dbo.position.srtmID, dbo.part.partName, dbo.i_catalog.catName
+FROM         dbo.position INNER JOIN
+                      dbo.part ON dbo.position.partID = dbo.part.partID INNER JOIN
+                      dbo.i_catalog ON dbo.part.catID = dbo.i_catalog.catID
+WHERE     (dbo.position.srtmID NOT IN
+                          (SELECT     srtmID
+                            FROM          dbo.sortament)) AND (dbo.position.srtmID > 0)
+--------------------------------------------------------------------------
+
+delete 
+FROM         dbo.position
+WHERE     (dbo.position.srtmID NOT IN
+                          (SELECT     srtmID
+                            FROM          dbo.sortament)) AND (dbo.position.srtmID > 0)
+                            
+
+проверка наличия лишних (неудаленных) свойств позиций изделий
+=====================================================================================
+SELECT     posID
+FROM         dbo.r_position_property
+WHERE     (posID NOT IN
+                          (SELECT     posID
+                            FROM          dbo.position))
+--------------------------------------------------------------
+delete
+FROM         dbo.r_position_property
+WHERE     (posID NOT IN
+                          (SELECT     posID
+                            FROM          dbo.position))
+                            
+проверка наличия лишних (неудаленных) свойств позиций сортамента
+=====================================================================================
+SELECT     srtmID
+FROM         dbo.r_sortament_property
+WHERE     (srtmID NOT IN
+                          (SELECT     srtmID
+                            FROM          dbo.sortament))    
+----------------------------------------------------------------                        
+DELETE
+FROM         dbo.r_sortament_property
+WHERE     (srtmID NOT IN
+                          (SELECT     srtmID
+                            FROM          dbo.sortament))                        
+                            
+позиции, не принадлежащие никаким изделиям
+=====================================================================================
+SELECT     posID
+FROM         dbo.position
+WHERE     (partID NOT IN
+                          (SELECT     partID
+                            FROM          dbo.part))         
+----------------------------------------------------------------  
+DELETE
+FROM         dbo.position
+WHERE     (partID NOT IN
+                          (SELECT     partID
+                            FROM          dbo.part))   
+
+логи несуществующих изделий  
+=====================================================================================
+SELECT     objectID AS partID
+FROM         dbo.operationslog
+WHERE     (objID = 1) AND (objectID NOT IN
+                          (SELECT     partID
+                            FROM          dbo.part))
+------------------------------------------------------               
+delete
+FROM         dbo.operationslog
+WHERE     (objID = 1) AND (objectID NOT IN
+                          (SELECT     partID
+                            FROM          dbo.part))
+
+логи несуществующих позиций
+=====================================================================================
+SELECT     objectID AS posID
+FROM         dbo.operationslog
+WHERE     (objID = 2) AND (objectID NOT IN
+                          (SELECT     posID
+                            FROM          dbo.position))
+------------------------------------------------------------------
+delete
+FROM         dbo.operationslog
+WHERE     (objID = 2) AND (objectID NOT IN
+                          (SELECT     posID
+                            FROM          dbo.position))
+
+удаление несуществующих изделий из списков 
+========================================================================
+SELECT     partID
+FROM         dbo.usrlist
+WHERE     (partID NOT IN
+                          (SELECT     partID
+                            FROM          dbo.part))
+------------------------------------------------------------------
+delete
+FROM         dbo.usrlist
+WHERE     (partID NOT IN
+                          (SELECT     partID
+                            FROM          dbo.part))
+
+удаление несуществующих изделий из списков 
+=========================================================================
+SELECT     partID
+FROM         dbo.r_catlist_part
+WHERE     (partID NOT IN
+                          (SELECT     partID
+                            FROM          dbo.part))
+------------------------------------------------------------------
+delete
+FROM         dbo.r_catlist_part
+WHERE     (partID NOT IN
+                          (SELECT     partID
+                            FROM          dbo.part))
+
