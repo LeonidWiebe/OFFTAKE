@@ -129,6 +129,8 @@ On Error GoTo ReadData_ERR
     
     listcfg.readXmlNodeByPath oXMLDoc, "Settings/Workspace/List"
     
+    reincfg.readXmlNodeByPath oXMLDoc, "Settings/Workspace/Reinforcement/Round"
+    
     'Dim p As New clsPart
     'Call p.genSortNumber("MD-25-25", 91)
     
@@ -145,6 +147,37 @@ On Error GoTo ReadData_ERR
     'Debug.Print offtcfg("Function" & 2)("Section2").attval("id")
     
     ' ===== specification settings =====
+    
+    If Len(speccfg("Lines")("vertical").attval("width")) > 0 Then scfgCmn.spec_v_line_wdt = Val(speccfg("Lines")("vertical").attval("width"))
+    If Len(speccfg("Lines")("vertical").attval("color")) > 0 Then scfgCmn.spec_v_line_clr = Val(speccfg("Lines")("vertical").attval("color"))
+    If Len(speccfg("Lines")("horizontal").attval("width")) > 0 Then scfgCmn.spec_h_line_wdt = Val(speccfg("Lines")("horizontal").attval("width"))
+    If Len(speccfg("Lines")("horizontal").attval("color")) > 0 Then scfgCmn.spec_h_line_clr = Val(speccfg("Lines")("horizontal").attval("color"))
+    
+    If Len(speccfg("Text").attval("color")) > 0 Then scfgCmn.spec_text_clr = Val(speccfg("Text").attval("color"))
+    
+    If Len(speccfg("Text")("Diameter").attval("value")) > 0 Then scfgCmn.spec_text_diam = speccfg("Text")("Diameter").attval("value")
+    
+    If Len(speccfg("Text")("Skip").attval("value")) > 0 Then scfgCmn.spec_skip_bar = speccfg("Text")("Skip").attval("value")
+    
+    If Len(speccfg("Scale").attval("value")) > 0 Then scfgCmn.spec_table_scale = speccfg("Scale").attval("value")
+    
+    
+    
+    If Len(speccfg("Excel").attval("template")) > 0 Then scfgCmn.spec_xls_template = speccfg("Excel").attval("template")
+    
+    If Len(speccfg("Excel")("Rows").attval("start")) > 0 Then scfgCmn.spec_xls_startrow = Val(speccfg("Excel")("Rows").attval("start"))
+    If Len(speccfg("Excel")("Rows").attval("quantity")) > 0 Then scfgCmn.spec_xls_rows = Val(speccfg("Excel")("Rows").attval("quantity"))
+    If Len(speccfg("Excel")("Rows").attval("jump")) > 0 Then scfgCmn.spec_xls_jump = Val(speccfg("Excel")("Rows").attval("jump"))
+    If Len(speccfg("Excel")("Columns").attval("start")) > 0 Then scfgCmn.spec_xls_startcol = Val(speccfg("Excel")("Columns").attval("start"))
+    
+    
+    If Len(reincfg("arc").attval("shift")) > 0 Then rndGlobal.iArmArc = Val(reincfg("arc").attval("shift"))
+    If Len(reincfg("arc").attval("snap")) > 0 Then rndGlobal.iArmArcSnap = Val(reincfg("arc").attval("snap"))
+    If Len(reincfg("line").attval("shift")) > 0 Then rndGlobal.iArmSegm = Val(reincfg("line").attval("shift"))
+    If Len(reincfg("line").attval("snap")) > 0 Then rndGlobal.iArmSegmSnap = Val(reincfg("line").attval("snap"))
+
+                        
+    
     
     For Each X In speccfg("Text")("Underline")
         If X.atname = "Default" And Len(X.attval("value")) > 0 Then

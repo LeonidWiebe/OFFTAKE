@@ -440,6 +440,7 @@ Public colSpecTextOver As New Collection
 Public speccfg As New colAts ' spec config
 Public offtcfg As New colAts ' offtake config
 Public listcfg As New colAts ' parts list config
+Public reincfg As New colAts ' reinf. config
 
 
 Public colFrml As New Collection
@@ -1270,39 +1271,39 @@ Public Function getServerSettings() As Boolean
                         str(19) = strArg
                         
                         ' spec config
-                    Case "spec_v_line_wdt"
-                        scfgCmn.spec_v_line_wdt = Val(strArg)
-                    Case "spec_h_line_wdt"
-                        scfgCmn.spec_h_line_wdt = Val(strArg)
-                    Case "spec_row_numbers"
-                        scfgCmn.spec_row_numbers = Val(strArg)
-                    Case "spec_v_line_clr"
-                        scfgCmn.spec_v_line_clr = Val(strArg)
-                    Case "spec_h_line_clr"
-                        scfgCmn.spec_h_line_clr = Val(strArg)
-                    Case "spec_text_clr"
-                        scfgCmn.spec_text_clr = Val(strArg)
-                    Case "spec_text_diam"
-                        scfgCmn.spec_text_diam = strArg
-                    Case "spec_skip_bar"
-                        scfgCmn.spec_skip_bar = Val(strArg)
-                    Case "spec_table_scale"
-                        scfgCmn.spec_table_scale = Val(strArg)
-                    Case "spec_col_cmass"
-                        scfgCmn.spec_col_cmass = Val(strArg)
-                    Case "spec_text_dscr"
-                        scfgCmn.spec_text_dscr = Trim(ar(1))
+'                    Case "spec_v_line_wdt"
+'                        scfgCmn.spec_v_line_wdt = Val(strArg)
+'                    Case "spec_h_line_wdt"
+'                        scfgCmn.spec_h_line_wdt = Val(strArg)
+'                    Case "spec_row_numbers"
+'                        scfgCmn.spec_row_numbers = Val(strArg)
+'                    Case "spec_v_line_clr"
+'                        scfgCmn.spec_v_line_clr = Val(strArg)
+'                    Case "spec_h_line_clr"
+'                        scfgCmn.spec_h_line_clr = Val(strArg)
+'                    Case "spec_text_clr"
+'                        scfgCmn.spec_text_clr = Val(strArg)
+'                    Case "spec_text_diam"
+'                        scfgCmn.spec_text_diam = strArg
+'                    Case "spec_skip_bar"
+'                        scfgCmn.spec_skip_bar = Val(strArg)
+'                    Case "spec_table_scale"
+'                        scfgCmn.spec_table_scale = Val(strArg)
+'                    Case "spec_col_cmass"
+'                        scfgCmn.spec_col_cmass = Val(strArg)
+'                    Case "spec_text_dscr"
+'                        scfgCmn.spec_text_dscr = Trim(ar(1))
                         
-                    Case "spec_xls_template"
-                        scfgCmn.spec_xls_template = Trim(ar(1))
-                    Case "spec_xls_startrow"
-                        scfgCmn.spec_xls_startrow = Val(strArg)
-                    Case "spec_xls_startcol"
-                        scfgCmn.spec_xls_startcol = Val(strArg)
-                    Case "spec_xls_rows"
-                        scfgCmn.spec_xls_rows = Val(strArg)
-                    Case "spec_xls_jump"
-                        scfgCmn.spec_xls_jump = Val(strArg)
+'                    Case "spec_xls_template"
+'                        scfgCmn.spec_xls_template = Trim(ar(1))
+'                    Case "spec_xls_startrow"
+'                        scfgCmn.spec_xls_startrow = Val(strArg)
+'                    Case "spec_xls_startcol"
+'                        scfgCmn.spec_xls_startcol = Val(strArg)
+'                    Case "spec_xls_rows"
+'                        scfgCmn.spec_xls_rows = Val(strArg)
+'                    Case "spec_xls_jump"
+'                        scfgCmn.spec_xls_jump = Val(strArg)
 '                        ------------------------------------------------------
 'Kulakov - add for Rooom to SPF (24/06/2017)
                      Case "space_xls_template"
@@ -1319,14 +1320,14 @@ Public Function getServerSettings() As Boolean
                     Case "part_new_name"
                         strNewPartName = Trim(ar(1))
                         
-                    Case "rein_arc_round_shift"
-                        rndGlobal.iArmArc = Val(strArg)
-                    Case "rein_arc_round_snap"
-                        rndGlobal.iArmArcSnap = Val(strArg)
-                    Case "rein_line_round_shift"
-                        rndGlobal.iArmSegm = Val(strArg)
-                    Case "rein_line_round_snap"
-                        rndGlobal.iArmSegmSnap = Val(strArg)
+'                    Case "rein_arc_round_shift"
+'                        rndGlobal.iArmArc = Val(strArg)
+'                    Case "rein_arc_round_snap"
+'                        rndGlobal.iArmArcSnap = Val(strArg)
+'                    Case "rein_line_round_shift"
+'                        rndGlobal.iArmSegm = Val(strArg)
+'                    Case "rein_line_round_snap"
+'                        rndGlobal.iArmSegmSnap = Val(strArg)
                         
 '                    Case "pw_menu"
 '                        ar = Split(strArg, ";")
