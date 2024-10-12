@@ -441,6 +441,11 @@ Public speccfg As New colAts ' spec config
 Public offtcfg As New colAts ' offtake config
 Public listcfg As New colAts ' parts list config
 Public reincfg As New colAts ' reinf. config
+Public intfcfg As New colAts ' interface config
+
+Public bFormGridsRedraw As Boolean
+Public bFormGridsIcons As Boolean
+Public bFormTabsHide As Boolean
 
 
 Public colFrml As New Collection

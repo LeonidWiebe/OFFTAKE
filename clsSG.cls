@@ -74,27 +74,50 @@ Private Sub Class_Terminate()
 End Sub
 
 '/******************************************************************************
-Public Function checkLibrary() As Boolean
+Public Function checkLibrary(Optional sLibName As String = "") As Integer
 '/******************************************************************************
     
     On Error GoTo checkLibrary_ERR
     
+    If sLibName = "" Then sLibName = strDrawingsLibraryFileName
+    
+    Dim istat As Integer
+    
+    istat = 0
+    
     If msapp Is Nothing Then Exit Function
     
+    istat = -1
+    
     If msapp.IsCellLibraryAttached Then
-        If StrComp(msapp.AttachedCellLibrary.FullName, strDrawingsLibraryFileName, vbTextCompare) <> 0 Then
-            msapp.AttachCellLibrary strDrawingsLibraryFileName, msdConversionModeNever
+        
+        istat = 1
+        
+        If StrComp(msapp.AttachedCellLibrary.FullName, sLibName, vbTextCompare) <> 0 Then
+            
+            istat = 2
+            msapp.DetachCellLibrary
+            
+            istat = 3
+            msapp.AttachCellLibrary sLibName, msdConversionModeNever
+            
         End If
+        
     Else
-        msapp.AttachCellLibrary strDrawingsLibraryFileName, msdConversionModeNever
+    
+        istat = 4
+        msapp.AttachCellLibrary sLibName, msdConversionModeNever
+        
     End If
     
-    checkLibrary = True
+    istat = 5
+    
+    checkLibrary = istat
     
     Exit Function
     
 checkLibrary_ERR:
-    checkLibrary = False
+    checkLibrary = istat
     
 End Function
 
@@ -119,18 +142,48 @@ End Sub
 
 
 '/******************************************************************************
-Public Sub draw()
+Public Sub draw_spec()
 '/******************************************************************************
 
     On Error GoTo draw_ERR
 
 '    cap.draw 0#
 
-    If Not checkLibrary Then
+    Dim st As Integer
+    st = checkLibrary ' 5 - success
+
+
+
+    If st <> 5 Then
+    
+        Dim strTempFilename As String
+        
+        strTempFilename = Environ("TEMP") & "\" & Format(Now, "YYYY-MM-DD-HH-mm-ss") & ".dgn"
+    
+        If FileExists(strDrawingsLibraryFileName) Then
+    
+            If copyFile(strDrawingsLibraryFileName, strTempFilename, True) Then
+            
+                st = 100 + checkLibrary(strTempFilename) ' 105 success
+            
+            Else
+                st = 6 ' cannot copy from net
+            End If
+        
+        Else
+            st = 7 ' lib file not exists (net access)
+        End If
+        
+    End If
+    
+
+
+
+    If Not (st = 5 Or st = 105) Then
     
         Dim res As VbMsgBoxResult
         
-        res = MsgBox("   Не удалось подключить библиотеку " & strDrawingsLibraryFileName & vbNewLine & _
+        res = MsgBox("   Не удалось подключить библиотеку" & strDrawingsLibraryFileName & " (ошибка " & st & ")" & vbNewLine & _
                     "   Некоторые части спецификации будут отсутствовать   " & vbNewLine & _
                     "   Продолжать выполение?   ", vbYesNo, "Вопрос")
                     

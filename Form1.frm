@@ -579,7 +579,7 @@ Begin VB.Form F1
             FrontTabForeColor=   -2147483630
             Caption         =   "Каталоги|Изделия|Арматура|Спецификация|Выборка|Стандарты|Управление|Wise"
             Align           =   0
-            CurrTab         =   1
+            CurrTab         =   0
             FirstTab        =   0
             Style           =   4
             Position        =   0
@@ -605,7 +605,7 @@ Begin VB.Form F1
             AccessibleRole  =   37
             Begin C1SizerLibCtl.C1Elastic C1Elastic5 
                Height          =   9555
-               Left            =   11595
+               Left            =   11895
                TabIndex        =   75
                TabStop         =   0   'False
                Top             =   330
@@ -1632,7 +1632,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic C1Elastic13 
                Height          =   9555
-               Left            =   11295
+               Left            =   11595
                TabIndex        =   56
                TabStop         =   0   'False
                Top             =   330
@@ -2129,7 +2129,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic C1Elastic7 
                Height          =   9555
-               Left            =   10995
+               Left            =   11295
                TabIndex        =   36
                TabStop         =   0   'False
                Top             =   330
@@ -2883,7 +2883,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic elOfftake 
                Height          =   9555
-               Left            =   10695
+               Left            =   10995
                TabIndex        =   11
                TabStop         =   0   'False
                Top             =   330
@@ -3208,7 +3208,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic elSpec 
                Height          =   9555
-               Left            =   10395
+               Left            =   10695
                TabIndex        =   10
                TabStop         =   0   'False
                Top             =   330
@@ -3487,7 +3487,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic elSrtm 
                Height          =   9555
-               Left            =   10095
+               Left            =   10395
                TabIndex        =   9
                TabStop         =   0   'False
                Top             =   330
@@ -3986,7 +3986,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic elEmbParts 
                Height          =   9555
-               Left            =   45
+               Left            =   10095
                TabIndex        =   8
                TabStop         =   0   'False
                Top             =   330
@@ -4746,7 +4746,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic elCats 
                Height          =   9555
-               Left            =   -10005
+               Left            =   45
                TabIndex        =   7
                TabStop         =   0   'False
                Top             =   330
@@ -5025,7 +5025,7 @@ Begin VB.Form F1
                         FrontTabForeColor=   -2147483630
                         Caption         =   "Содержимое|Спецификация|Выборка|Позиции|Модель"
                         Align           =   0
-                        CurrTab         =   4
+                        CurrTab         =   0
                         FirstTab        =   0
                         Style           =   5
                         Position        =   0
@@ -5051,7 +5051,7 @@ Begin VB.Form F1
                         AccessibleRole  =   37
                         Begin VSFlex8Ctl.VSFlexGrid fgCatTree 
                            Height          =   4455
-                           Left            =   -6945
+                           Left            =   45
                            TabIndex        =   70
                            Top             =   360
                            Width           =   5400
@@ -5148,7 +5148,7 @@ Begin VB.Form F1
                         End
                         Begin VSFlex8Ctl.VSFlexGrid fgCatSpec 
                            Height          =   4455
-                           Left            =   -6645
+                           Left            =   6135
                            TabIndex        =   71
                            Top             =   360
                            Width           =   5400
@@ -5245,7 +5245,7 @@ Begin VB.Form F1
                         End
                         Begin VSFlex8Ctl.VSFlexGrid fgCatOfft 
                            Height          =   4455
-                           Left            =   -6345
+                           Left            =   6435
                            TabIndex        =   72
                            Top             =   360
                            Width           =   5400
@@ -5342,7 +5342,7 @@ Begin VB.Form F1
                         End
                         Begin VSFlex8Ctl.VSFlexGrid fgCatPos 
                            Height          =   4455
-                           Left            =   -6045
+                           Left            =   6735
                            TabIndex        =   73
                            Top             =   360
                            Width           =   5400
@@ -5439,7 +5439,7 @@ Begin VB.Form F1
                         End
                         Begin VSFlex8Ctl.VSFlexGrid fgPartsModel 
                            Height          =   4455
-                           Left            =   45
+                           Left            =   7035
                            TabIndex        =   74
                            Top             =   360
                            Width           =   5400
@@ -6147,14 +6147,14 @@ Begin VB.Form F1
             AutoSize        =   2
             Object.Width           =   1773
             MinWidth        =   1764
-            TextSave        =   "02.09.2024"
+            TextSave        =   "11.10.2024"
          EndProperty
          BeginProperty Panel3 {8E3867AB-8586-11D1-B16A-00C0F0283628} 
             Style           =   5
             AutoSize        =   2
             Object.Width           =   1244
             MinWidth        =   1235
-            TextSave        =   "15:49"
+            TextSave        =   "14:59"
          EndProperty
          BeginProperty Panel4 {8E3867AB-8586-11D1-B16A-00C0F0283628} 
             AutoSize        =   2
@@ -6625,6 +6625,9 @@ Begin VB.Form F1
       End
       Begin VB.Menu mnuPrefPdSortByUse 
          Caption         =   "Сортировка определений по использованию"
+      End
+      Begin VB.Menu mnuPrefShowGridIcons 
+         Caption         =   "Отображать значки таблиц"
       End
       Begin VB.Menu mnuPrefSep44 
          Caption         =   "-"
@@ -7135,7 +7138,6 @@ Private bWise As Boolean
 Private arCopyParts() As Long
 Private iCopyPartsCount As Long
 
-
 Private bListDrag As Boolean
 
 Private bReinGridLeftRight As Boolean
@@ -7319,9 +7321,10 @@ Public Sub fgCatPartsSetRowData(Row As Long, p As clsPos, bSumChanged As Boolean
             End If
         End If
         
-        
+        If bFormGridsIcons Then
         If p.bNotOnly Then
             .Cell(flexcpPicture, Row, .ColIndex("num")) = ImageList2.ListImages("attach").ExtractIcon
+        End If
         End If
         
         If Len(Trim(p.posNote)) > 0 Then
@@ -12401,6 +12404,8 @@ Private Sub Form_Load()
     mnuPrefLap.Checked = GetSetting("Offtake2", "Size", "mnuPrefLap.Checked", False)
     mnuPrefCatDelConfirm.Checked = GetSetting("Offtake2", "Size", "mnuPrefCatDelConfirm.Checked", True)
     mnuPrefPdSortByUse.Checked = GetSetting("Offtake2", "Size", "mnuPrefPdSortByUse.Checked", False)
+    mnuPrefShowGridIcons.Checked = bFormGridsRedraw
+    'mnuPrefShowGridIcons.Checked = GetSetting("Offtake2", "Size", "mnuPrefShowGridIcons.Checked", bFormGridsRedraw)
     
     mnuViewCatsStat(pst.pstRazrabotka).Checked = GetSetting("Offtake2", "Size", "pstRazrabotka", True)
     mnuViewCatsStat(pst.pstProvereno).Checked = GetSetting("Offtake2", "Size", "pstProvereno", True)
@@ -12466,18 +12471,31 @@ Private Sub Form_Load()
     If tvCats.Nodes.Count = 0 Then
         ' all off
         Dim III As Integer
-        For III = 0 To ctabMain.NumTabs - 2
+        
+        If bFormTabsHide Then
+        ctabMain.TabVisible(0) = False
+        ctabMain.TabVisible(1) = False
+        ctabMain.TabVisible(2) = False
+        End If
+        
+        For III = 3 To ctabMain.NumTabs - 2
             ctabMain.TabVisible(III) = False
         Next
+        
 '        ctabMain.TabVisible(7) = True
+
         ctabMain.CurrTab = 7
         elList.width = 10
     Else
+        If bFormTabsHide Then
         ctabMain.TabVisible(1) = False
         ctabMain.TabVisible(2) = False
+        End If
+        
         ctabMain.TabVisible(3) = True
         ctabMain.TabVisible(4) = True
 '        ctabMain.TabVisible(7) = True
+
         ctabSrtm.CurrTab = 0
         ctabMain.TabVisible(6) = usrCurrent.trusted
     
@@ -13693,7 +13711,7 @@ Public Sub loadOfftake(Optional bInner As Boolean = True, Optional bSkipFirst As
     
     fgOfftake.Rows = 1
 
-    fgOfftake.redraw = flexRDNone
+    If Not bFormGridsRedraw Then fgOfftake.redraw = flexRDNone
     
     
     Dim cat As clsCat
@@ -13781,7 +13799,7 @@ Public Sub loadOfftake(Optional bInner As Boolean = True, Optional bSkipFirst As
     
     fgOfftake.AutoSize 0, fgOfftake.cols - 1
     
-    fgOfftake.redraw = flexRDBuffered
+    If Not bFormGridsRedraw Then fgOfftake.redraw = flexRDDirect
     Me.MousePointer = 0
     
     
@@ -13823,7 +13841,7 @@ Public Sub loadOfftake(Optional bInner As Boolean = True, Optional bSkipFirst As
     Exit Sub
     
 loadOfftake_ERR:
-    fgOfftake.redraw = flexRDBuffered
+    If Not bFormGridsRedraw Then fgOfftake.redraw = flexRDDirect
     Me.MousePointer = 0
     Me.SB.Panels("status").text = "loadOfftake - Error - " & err.Description
     
@@ -13842,7 +13860,7 @@ Public Sub drawSpec(p As Point3d)
     
     
     
-    spec.draw
+    spec.draw_spec
     
     
     
@@ -14465,7 +14483,7 @@ Public Sub loadListGrid(Optional catListID As Long = 0, Optional bReloadCatIfNot
     Me.tbSpec.Buttons("Draw").Enabled = True
     Me.tbOfftake.Buttons("Draw").Enabled = True
     
-    fgList.redraw = flexRDNone
+    If Not bFormGridsRedraw Then fgList.redraw = flexRDNone
     
     Set fgList.DataSource = RS ' fires fgList_AfterDataRefresh
     
@@ -14565,7 +14583,7 @@ Public Sub loadListGrid(Optional catListID As Long = 0, Optional bReloadCatIfNot
     
     If fgList.Rows > 1 Then fgList.Cell(flexcpFontBold, 1, 0, fgList.Rows - 1) = False
     
-    fgList.redraw = flexRDBuffered
+    If Not bFormGridsRedraw Then fgList.redraw = flexRDDirect
     
     '        fgList.ColHidden(fgList.ColIndex("partSortID")) = False
     
@@ -14593,7 +14611,7 @@ Public Sub loadListGrid(Optional catListID As Long = 0, Optional bReloadCatIfNot
 Exit Sub
 
 loadListGrid_ERR:
-    fgList.redraw = flexRDBuffered
+    If Not bFormGridsRedraw Then fgList.redraw = flexRDDirect
     MsgBox "[" & err.Number & "] " & err.Description, vbInformation, "loadListGrid - Error"
 
 End Sub
@@ -14962,6 +14980,7 @@ Private Sub Form_Unload(Cancel As Integer)
     SaveSetting "Offtake2", "Size", "mnuPrefLap.Checked", mnuPrefLap.Checked
     SaveSetting "Offtake2", "Size", "mnuPrefCatDelConfirm.Checked", mnuPrefCatDelConfirm.Checked
     SaveSetting "Offtake2", "Size", "mnuPrefPdSortByUse.Checked", mnuPrefPdSortByUse.Checked
+    SaveSetting "Offtake2", "Size", "mnuPrefShowGridIcons.Checked", mnuPrefShowGridIcons.Checked
     
     SaveSetting "Offtake2", "Size", "lngSpecDefaultRows", lngSpecDefaultRows
     SaveSetting "Offtake2", "Size", "lngSpecLastRows", lngSpecLastRows
@@ -20181,6 +20200,22 @@ End Sub
 
 
 
+'/******************************************************************************
+Private Sub mnuPrefShowGridIcons_Click()
+'/******************************************************************************
+
+    On Error GoTo mnuPrefShowGridIcons_Click_ERR
+
+    mnuPrefShowGridIcons.Checked = Not mnuPrefShowGridIcons.Checked
+    bFormGridsIcons = mnuPrefShowGridIcons.Checked
+
+
+Exit Sub
+
+mnuPrefShowGridIcons_Click_ERR:
+
+End Sub
+
 Private Sub mnuPrefUseRein_Click()
 
 
@@ -22214,20 +22249,25 @@ cnt:
                     ' добавление строчки в каталог назначения
                     Me.fgCmd(indexDst).AddItem objs("catalog") & vbTab & catNewID & vbTab & ct.catName & vbTab & ct.catName
         
+                If bFormGridsIcons Then
                     If cattypes(copyInfo.catTypeID).ctEnum = ctRein Then
                         Me.fgCmd(indexDst).Cell(flexcpPicture, fgCmd(indexDst).Rows - 1, 3) = ImageList2.ListImages("reincat").ExtractIcon
                     Else
                         Me.fgCmd(indexDst).Cell(flexcpPicture, fgCmd(indexDst).Rows - 1, 3) = ImageList2.ListImages("catalog").ExtractIcon
                     End If
+                End If
                     
                     If copyInfo.bSrcDstEqual Then ' добавление строчки в исходный каталог
                         Me.fgCmd(indexSrc).AddItem objs("catalog") & vbTab & catNewID & vbTab & ct.catName & vbTab & ct.catName
             
+                        If bFormGridsIcons Then
                         If cattypes(copyInfo.catTypeID).ctEnum = ctRein Then
                             Me.fgCmd(indexSrc).Cell(flexcpPicture, fgCmd(indexSrc).Rows - 1, 3) = ImageList2.ListImages("reincat").ExtractIcon
                         Else
                             Me.fgCmd(indexSrc).Cell(flexcpPicture, fgCmd(indexSrc).Rows - 1, 3) = ImageList2.ListImages("catalog").ExtractIcon
                         End If
+                        End If
+                        
                     End If
         
                 End If
@@ -25560,7 +25600,8 @@ weiter:
         ctabMain.TabVisible(1) = True
         If bShowCatTab Then ctabMain.CurrTab = 1
     End If
-    ctabMain.TabVisible(2) = False
+    
+    If bFormTabsHide Then ctabMain.TabVisible(2) = False
     '    ctabMain.TabVisible(3) = True
     
     tvParts.Visible = True
@@ -27107,7 +27148,7 @@ Private Function fgCatsAddList2(ID As Long, ByRef bListExist As Boolean) As Bool
         Exit Function
     End If
     
-    fgCats.redraw = flexRDNone
+    If Not bFormGridsRedraw Then fgCats.redraw = flexRDNone
     
     
     
@@ -27181,7 +27222,7 @@ Private Function fgCatsAddList2(ID As Long, ByRef bListExist As Boolean) As Bool
     
     
     fgCats.height = (fgCats.Rows + 1) * fgCats.RowHeight(1)
-    fgCats.redraw = flexRDDirect
+    If Not bFormGridsRedraw Then fgCats.redraw = flexRDDirect
     
     
 '    Me.fgCatTree.Enabled = False ' так как содержимое catlist
@@ -27190,7 +27231,7 @@ Private Function fgCatsAddList2(ID As Long, ByRef bListExist As Boolean) As Bool
 Exit Function
 
 fgCatsAddList_ERR:
-    fgCats.redraw = flexRDDirect
+    If Not bFormGridsRedraw Then fgCats.redraw = flexRDDirect
     MsgBox "[" & err.Number & "] " & err.Description, vbCritical, "fgCatsAddList - Error"
 
 End Function
@@ -27317,7 +27358,7 @@ Public Sub fgCatsAddCatalog(fgToAdd As VSFlexGrid, ID As Long, Optional bOnlyPar
     
     On Error GoTo fgCatsAddCatalog_ERR
     
-'    fgToAdd.redraw = flexRDNone
+'    If Not bFormGridsRedraw Then fgToAdd.redraw = flexRDNone
     
 '    Dim Item As ListItem
 '    For Each Item In fgCatTree.ListItems
@@ -27492,13 +27533,13 @@ Public Sub fgCatsAddCatalog(fgToAdd As VSFlexGrid, ID As Long, Optional bOnlyPar
 '
 '
 '    fgToAdd.height = (fgToAdd.Rows + 1) * fgToAdd.RowHeight(1)
-'    fgToAdd.redraw = flexRDDirect
+'    If Not bFormGridsRedraw Then fgToAdd.redraw = flexRDDirect
     
     
     Exit Sub
     
 fgCatsAddCatalog_ERR:
-'    fgToAdd.redraw = flexRDDirect
+'    If Not bFormGridsRedraw Then fgToAdd.redraw = flexRDDirect
     MsgBox "[" & err.Number & "] " & err.Description, vbCritical, "fgCatsAddCatalog - Error"
     
 End Sub
@@ -27629,7 +27670,7 @@ Private Sub tvCats_NodeClick(ByVal Node As MSComctlLib.Node)
     Dim pID As Long
     Dim pobjID As Long
     
-    fgCats.redraw = flexRDNone
+    If Not bFormGridsRedraw Then fgCats.redraw = flexRDNone
     
     fgCats.Rows = 1
     
@@ -27662,23 +27703,26 @@ Private Sub tvCats_NodeClick(ByVal Node As MSComctlLib.Node)
     
     Me.fgCatTree.Tag = ""
 
-
+    If bFormTabsHide Then
     ctabCat.TabVisible(0) = False
     ctabCat.TabVisible(1) = False
     ctabCat.TabVisible(2) = False
     ctabCat.TabVisible(3) = False
     ctabCat.TabVisible(4) = False
+    End If
 
 '    fgCatTree.Visible = False
 '    fgCatSpec.Visible = False
 '    fgCatOfft.Visible = False
 '    fgCatPos.Visible = False
 
+    If Not bFormGridsRedraw Then
     fgCatTree.redraw = flexRDNone
     fgCatSpec.redraw = flexRDNone
     fgCatOfft.redraw = flexRDNone
     fgCatPos.redraw = flexRDNone
     fgCatFiles.redraw = flexRDNone
+    End If
 
     fgCatTree.Rows = 1
     fgCatSpec.Rows = 1
@@ -27728,14 +27772,28 @@ Private Sub tvCats_NodeClick(ByVal Node As MSComctlLib.Node)
 '        Else
 '        End If
         
-        loadCmdParts fgCatTree, False, ID, cn_data
-        Me.fgCatTree.Tag = ID
+        If ctabCat.CurrTab = 0 Then
+            loadCmdParts fgCatTree, False, ID, cn_data
+            Me.fgCatTree.Tag = ID
+        End If
         
-        fgCatsAddListOfft ct.catListID, bNoAdd
-        fgCatsAddListSpec ct.catListID, bNoAdd
-        fgCatsAddPositions ID
+        If ctabCat.CurrTab = 1 Then
+            fgCatsAddListSpec ct.catListID, bNoAdd
+        End If
+        
+        If ctabCat.CurrTab = 2 Then
+            fgCatsAddListOfft ct.catListID, bNoAdd
+        End If
+        
+        If ctabCat.CurrTab = 3 Then
+            fgCatsAddPositions ID
+        End If
+        
         'fgCatsAddFiles ID
-        fgCatsAddPartsModel ID
+        
+        If ctabCat.CurrTab = 4 Then
+            fgCatsAddPartsModel ID
+        End If
         
         bVis(0) = True
         bVis(1) = True
@@ -27757,10 +27815,17 @@ Private Sub tvCats_NodeClick(ByVal Node As MSComctlLib.Node)
 '        If ct.iStatus = pstArchive Or ct.iStatus = pstUstar Then
 '        End If
         
-        fgCatsAddListOfft ID, bNoAdd
-        fgCatsAddListSpec ID, bNoAdd
+        If ctabCat.CurrTab = 2 Then
+            fgCatsAddListOfft ID, bNoAdd
+        End If
         
-        loadCmdListContent fgCatTree, False, ID, cn_data
+        If ctabCat.CurrTab = 1 Then
+            fgCatsAddListSpec ID, bNoAdd
+        End If
+        
+        If ctabCat.CurrTab = 0 Then
+            loadCmdListContent fgCatTree, False, ID, cn_data
+        End If
         
         Me.tbCats.Buttons("InList").Enabled = CBool(lngCurCatListID > 0) And bNoAdd = False And checkGroupPerm(usrCurrent.groupID, "catlist", operModify)
 
@@ -27800,7 +27865,7 @@ Private Sub tvCats_NodeClick(ByVal Node As MSComctlLib.Node)
     
     If ID > 0 Then loadLog strNoteTag, ID
     
-    fgCats.redraw = flexRDBuffered
+    If Not bFormGridsRedraw Then fgCats.redraw = flexRDDirect
     
     
 '    fgCatTree.Visible = bVis(0)
@@ -27808,17 +27873,21 @@ Private Sub tvCats_NodeClick(ByVal Node As MSComctlLib.Node)
 '    fgCatOfft.Visible = bVis(2)
 '    fgCatPos.Visible = bVis(3)
     
-    fgCatTree.redraw = flexRDBuffered
-    fgCatSpec.redraw = flexRDBuffered
-    fgCatOfft.redraw = flexRDBuffered
-    fgCatPos.redraw = flexRDBuffered
-    'fgCatFiles.redraw = flexRDBuffered
+    If Not bFormGridsRedraw Then
+    fgCatTree.redraw = flexRDDirect
+    fgCatSpec.redraw = flexRDDirect
+    fgCatOfft.redraw = flexRDDirect
+    fgCatPos.redraw = flexRDDirect
+    'fgCatFiles.redraw = flexRDDirect
+    End If
     
+    If bFormTabsHide Then
     ctabCat.TabVisible(0) = bVis(0)
     ctabCat.TabVisible(1) = bVis(1)
     ctabCat.TabVisible(2) = bVis(2)
     ctabCat.TabVisible(3) = bVis(3)
     ctabCat.TabVisible(4) = bVis(4)
+    End If
     
     
 
@@ -30103,10 +30172,12 @@ Public Sub loadCmdCat(FG As VSFlexGrid, bNew As Boolean, objID As Long, objectID
                                     RS.fields("pcnt").Value & vbTab & _
                                     RS.fields("lcnt").Value
             
+            If bFormGridsIcons Then
             If cattypes(RS.fields("catTypeID").Value).ctEnum = ctRein Then
                 FG.Cell(flexcpPicture, FG.Rows - 1, 3) = ImageList2.ListImages("reincat").ExtractIcon
             Else
                 FG.Cell(flexcpPicture, FG.Rows - 1, 3) = ImageList2.ListImages("catalog").ExtractIcon
+            End If
             End If
             
             RS.MoveNext
@@ -30139,7 +30210,7 @@ Public Sub loadCmdParts(FG As VSFlexGrid, bNew As Boolean, catID As Long, cn As 
     Dim RS As New ADODB.Recordset
     Dim strSQL As String
     
-    FG.redraw = flexRDNone
+    If Not bFormGridsRedraw Then FG.redraw = flexRDNone
 
     If bNew Then
         FG.Rows = 1
@@ -30165,10 +30236,12 @@ Public Sub loadCmdParts(FG As VSFlexGrid, bNew As Boolean, catID As Long, cn As 
                                 RS.fields("pcnt").Value & vbTab & _
                                 Format(RS.fields("mass").Value, sFmt1)
             
+            If bFormGridsIcons Then
             If RS.fields("link").Value = 0 Then
                 FG.Cell(flexcpPicture, FG.Rows - 1, 3) = ImageList2.ListImages("part" & RS.fields("partStatusID").Value).ExtractIcon
             Else
                 FG.Cell(flexcpPicture, FG.Rows - 1, 3) = ImageList2.ListImages("link").ExtractIcon
+            End If
             End If
             
             RS.MoveNext
@@ -30185,14 +30258,14 @@ Public Sub loadCmdParts(FG As VSFlexGrid, bNew As Boolean, catID As Long, cn As 
     FG.ColHidden(2) = True
 
     
-    FG.redraw = flexRDBuffered
+    If Not bFormGridsRedraw Then FG.redraw = flexRDDirect
     
 
 
 Exit Sub
 
 loadCmdParts_ERR:
-    FG.redraw = flexRDBuffered
+    If Not bFormGridsRedraw Then FG.redraw = flexRDDirect
     MsgBox "[" & err.Number & "] " & err.Description, vbInformation, "loadCmdParts - Error"
 
 End Sub
@@ -30222,7 +30295,9 @@ Public Sub loadCmdLists(Index As Integer, bNew As Boolean, catID As Long)
         Do
             Me.fgCmd(Index).AddItem objs("catlist") & vbTab & RS.fields("catlistID").Value & vbTab & RS.fields("catlistName").Value & vbTab & RS.fields("catlistName").Value
             
+            If bFormGridsIcons Then
             Me.fgCmd(Index).Cell(flexcpPicture, fgCmd(Index).Rows - 1, 3) = ImageList2.ListImages("catlist").ExtractIcon
+            End If
             
             RS.MoveNext
         Loop Until RS.EOF
@@ -30275,12 +30350,14 @@ Public Sub loadCmdListContent(FG As VSFlexGrid, bNew As Boolean, clID As Long, c
                             RS.fields("partName").Value & vbTab & _
                             RS.fields("partQty").Value
             
+            If bFormGridsIcons Then
             If RS.fields("objID").Value = objs("part") Then
                 FG.Cell(flexcpPicture, FG.Rows - 1, 3) = ImageList2.ListImages("part0").ExtractIcon
             ElseIf RS.fields("objID").Value = objs("catalog") Then
                 FG.Cell(flexcpPicture, FG.Rows - 1, 3) = ImageList2.ListImages("catalog").ExtractIcon
             ElseIf RS.fields("objID").Value = objs("catlist") Then
                 FG.Cell(flexcpPicture, FG.Rows - 1, 3) = ImageList2.ListImages("catlist").ExtractIcon
+            End If
             End If
             
             
@@ -30516,10 +30593,12 @@ Public Sub loadCmd(Index As Integer, Optional objID As Long = 0, Optional object
     
     For i = 0 To Me.fgCmd(Index).Rows - 1
     
+        If bFormGridsIcons Then
         If Val(Me.fgCmd(Index).TextMatrix(i, 0)) = objs("project") Then Me.fgCmd(Index).Cell(flexcpPicture, i, 3) = ImageList2.ListImages("project").ExtractIcon
         If Val(Me.fgCmd(Index).TextMatrix(i, 0)) = objs("block") Then Me.fgCmd(Index).Cell(flexcpPicture, i, 3) = ImageList2.ListImages("block").ExtractIcon
         If Val(Me.fgCmd(Index).TextMatrix(i, 0)) = objs("building") Then Me.fgCmd(Index).Cell(flexcpPicture, i, 3) = ImageList2.ListImages("building").ExtractIcon
 '        If Val(Me.fgCmd(Index).TextMatrix(I, 0)) = objs("catalog") Then Me.fgCmd(Index).Cell(flexcpPicture, I, 3) = ImageList2.ListImages("catalog").ExtractIcon
+        End If
         
         If Val(Me.fgCmd(Index).TextMatrix(i, 0)) = objIDts And Val(Me.fgCmd(Index).TextMatrix(i, 1)) = objectIDts Then
             If Not bNoAction Then
@@ -31024,11 +31103,12 @@ Public Sub loadPartsGrid(catID As Long, Optional bReloadIfSame As Boolean = True
 weiter:
     
     If Me.tvCats.Nodes.Count > 0 Then
-        ctabMain.TabVisible(2) = True ' арматура
+    
+        If bFormTabsHide Then ctabMain.TabVisible(2) = True ' арматура
+        
         If bShowCatTab Then
             
             ctabMain.CurrTab = 2
-            
             
             If partID > 0 Then
                 fgCatParts.Row = fgCatParts.FindRow(partID, , fgCatParts.ColIndex("partID"))
@@ -31038,15 +31118,10 @@ weiter:
             
         End If
     End If
-    ctabMain.TabVisible(1) = False ' изделия
     
-    
-    
-    
-    
+    If bFormTabsHide Then ctabMain.TabVisible(1) = False ' изделия
     
     lblCurCatName(1).Caption = ct.getCatPath
-    
     
     
     Exit Sub
@@ -31069,8 +31144,6 @@ Public Sub loadPartsGrid3()
     With fgCatParts
         
         .Rows = colRein2.Count + 1
-        
-        .redraw = flexRDNone
         
         .cols = 23
         
@@ -31154,6 +31227,9 @@ Public Sub loadPartsGrid3()
         Dim dPosLength As Double
         Dim sPosLength As String
         
+        
+        If Not bFormGridsRedraw Then .redraw = flexRDNone
+        
         Row = 1
         For Each p In colRein2
             
@@ -31162,6 +31238,8 @@ Public Sub loadPartsGrid3()
             Row = Row + 1
             
         Next p
+        
+        If Not bFormGridsRedraw Then .redraw = flexRDDirect
         
         
         calcReinGridSum
@@ -31173,7 +31251,6 @@ Public Sub loadPartsGrid3()
         .ColWidth(.ColIndex("srtm")) = .ColWidth(.ColIndex("srtm")) + 300
         .ColWidth(.ColIndex("mat")) = .ColWidth(.ColIndex("mat")) + 300
         
-        .redraw = flexRDBuffered
         
     End With
     
@@ -31181,7 +31258,7 @@ Public Sub loadPartsGrid3()
     Exit Sub
     
 fillReinGrid_ERR:
-    fgCatParts.redraw = flexRDBuffered
+    If Not bFormGridsRedraw Then fgCatParts.redraw = flexRDDirect
     MsgBox "[" & err.Number & "] " & err.Description, vbInformation, "fillReinGrid - Error"
     
 End Sub

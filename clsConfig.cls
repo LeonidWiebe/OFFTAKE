@@ -131,8 +131,30 @@ On Error GoTo ReadData_ERR
     
     reincfg.readXmlNodeByPath oXMLDoc, "Settings/Workspace/Reinforcement/Round"
     
+    intfcfg.readXmlNodeByPath oXMLDoc, "Settings/Workspace/Interface/Common"
+    
     'Dim p As New clsPart
     'Call p.genSortNumber("MD-25-25", 91)
+    
+    ' ===== interface settings =====
+    
+    If Len(intfcfg("Grids").attval("redraw")) > 0 Then
+        bFormGridsRedraw = CBool(intfcfg("Grids").attval("redraw"))
+    Else
+        bFormGridsRedraw = False
+    End If
+    
+    If Len(intfcfg("Grids").attval("icons")) > 0 Then
+        bFormGridsIcons = CBool(intfcfg("Grids").attval("icons"))
+    Else
+        bFormGridsIcons = GetSetting("Offtake2", "Size", "mnuPrefShowGridIcons.Checked", True)
+    End If
+    
+    If Len(intfcfg("Tabs").attval("hide")) > 0 Then
+        bFormTabsHide = CBool(intfcfg("Tabs").attval("hide"))
+    Else
+        bFormTabsHide = True
+    End If
     
     ' ===== offtake settings =====
     

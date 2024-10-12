@@ -612,7 +612,7 @@ Public Property Let DESCR(ByVal n As String)
     partDescr = Trim(n)
     If F1.fgPart.Rows > 3 Then F1.fgPart.TextMatrix(3, 1) = Me.PART_DESCR
     If Me.bDsNum Then
-        F1.fgPart.Cell(flexcpPicture, 3, 1) = F1.ImageList2.ListImages("catalog").ExtractIcon
+        If bFormGridsIcons Then F1.fgPart.Cell(flexcpPicture, 3, 1) = F1.ImageList2.ListImages("catalog").ExtractIcon
         F1.fgPart.Cell(flexcpPictureAlignment, 3, 1) = flexPicAlignRightCenter
     End If
     
@@ -1117,7 +1117,7 @@ Public Sub updatePartGrids(bReloadsProps As Boolean)
     
     ' изделие
     '-------------------------------------------------------------------
-    FG.redraw = flexRDNone
+    If Not bFormGridsRedraw Then FG.redraw = flexRDNone
     
     FG.Rows = 0
     
@@ -1149,7 +1149,7 @@ Public Sub updatePartGrids(bReloadsProps As Boolean)
         FG.AddItem "Обозначение" & vbTab & Me.PART_DESCR & vbTab & 0
         FG.Cell(flexcpFontBold, FG.Rows - 1, 0) = True
         If Me.bDsNum Then
-            FG.Cell(flexcpPicture, FG.Rows - 1, 1) = F1.ImageList2.ListImages("catalog").ExtractIcon
+            If bFormGridsIcons Then FG.Cell(flexcpPicture, FG.Rows - 1, 1) = F1.ImageList2.ListImages("catalog").ExtractIcon
             FG.Cell(flexcpPictureAlignment, FG.Rows - 1, 1) = flexPicAlignRightCenter
         End If
         
@@ -1234,14 +1234,14 @@ Public Sub updatePartGrids(bReloadsProps As Boolean)
     
     F1.elFgPosGrid_ResizeChildren
     
-    FG.redraw = flexRDBuffered
+    If Not bFormGridsRedraw Then FG.redraw = flexRDDirect
     
     'gotick False, "after FG.redraw"
     
     
     ' позиции
     '-------------------------------------------------------------------
-    fgp.redraw = flexRDNone
+    If Not bFormGridsRedraw Then fgp.redraw = flexRDNone
     fgp.FormatString = "Позиция" & vbTab & "Кол-во" & vbTab & "Масса" & vbTab & "Общ. масса"
     fgp.Rows = 1
     
@@ -1298,8 +1298,10 @@ Public Sub updatePartGrids(bReloadsProps As Boolean)
         p.fgRowToEdit = r
         
         If bUpd Then ' было обновлено - ставим галки
+            If bFormGridsIcons Then
             If bUpdateUM Then p.fgp.Cell(flexcpPicture, r, 2) = F1.ImageList2.ListImages("gal1").ExtractIcon
             If bUpdateCM Then p.fgp.Cell(flexcpPicture, r, 3) = F1.ImageList2.ListImages("gal1").ExtractIcon
+            End If
         Else
             If bUpdateUM Then p.fgp.Cell(flexcpBackColor, r, 2) = lngLightRed
             If bUpdateCM Then p.fgp.Cell(flexcpBackColor, r, 3) = lngLightRed
@@ -1333,7 +1335,7 @@ Public Sub updatePartGrids(bReloadsProps As Boolean)
     
     
     
-    fgp.redraw = flexRDBuffered
+    If Not bFormGridsRedraw Then fgp.redraw = flexRDDirect
     
     'gotick False, "after fgp.redraw"
     
@@ -1514,7 +1516,13 @@ Public Function genSortNumber(pn As String, Optional prjID As Long = 0) As Strin
     str = pn
     strD = pn
     
-    str = Replace(str, " ", "", , , vbTextCompare)
+    str = Replace(str, " ", splitter, , , vbTextCompare)
+    str = Replace(str, ".", splitter, , , vbTextCompare)
+    str = Replace(str, ",", splitter, , , vbTextCompare)
+    str = Replace(str, ";", splitter, , , vbTextCompare)
+    str = Replace(str, ":", splitter, , , vbTextCompare)
+    '....
+    
     strD = Replace(strD, " ", "", , , vbTextCompare)
     strD = Replace(strD, splitter, "", , , vbTextCompare)
     
@@ -1545,6 +1553,10 @@ Public Function genSortNumber(pn As String, Optional prjID As Long = 0) As Strin
         If UBound(ar) > 2 Then partSortNumber = partSortNumber & splitter & Format(Val(ar(3)), "00000")
         If UBound(ar) > 3 Then partSortNumber = partSortNumber & splitter & Format(Val(ar(4)), "00000")
         If UBound(ar) > 4 Then partSortNumber = partSortNumber & splitter & Format(Val(ar(5)), "00000")
+        If UBound(ar) > 5 Then partSortNumber = partSortNumber & splitter & Format(Val(ar(6)), "00000")
+        If UBound(ar) > 6 Then partSortNumber = partSortNumber & splitter & Format(Val(ar(7)), "00000")
+        If UBound(ar) > 7 Then partSortNumber = partSortNumber & splitter & Format(Val(ar(8)), "00000")
+        If UBound(ar) > 8 Then partSortNumber = partSortNumber & splitter & Format(Val(ar(9)), "00000")
     Else
         partSortNumber = strD
     End If
