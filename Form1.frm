@@ -579,7 +579,7 @@ Begin VB.Form F1
             FrontTabForeColor=   -2147483630
             Caption         =   "Каталоги|Изделия|Арматура|Спецификация|Выборка|Стандарты|Управление|Wise"
             Align           =   0
-            CurrTab         =   0
+            CurrTab         =   4
             FirstTab        =   0
             Style           =   4
             Position        =   0
@@ -605,7 +605,7 @@ Begin VB.Form F1
             AccessibleRole  =   37
             Begin C1SizerLibCtl.C1Elastic C1Elastic5 
                Height          =   9555
-               Left            =   11895
+               Left            =   10695
                TabIndex        =   75
                TabStop         =   0   'False
                Top             =   330
@@ -1632,7 +1632,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic C1Elastic13 
                Height          =   9555
-               Left            =   11595
+               Left            =   10395
                TabIndex        =   56
                TabStop         =   0   'False
                Top             =   330
@@ -2129,7 +2129,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic C1Elastic7 
                Height          =   9555
-               Left            =   11295
+               Left            =   10095
                TabIndex        =   36
                TabStop         =   0   'False
                Top             =   330
@@ -2883,7 +2883,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic elOfftake 
                Height          =   9555
-               Left            =   10995
+               Left            =   45
                TabIndex        =   11
                TabStop         =   0   'False
                Top             =   330
@@ -3208,7 +3208,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic elSpec 
                Height          =   9555
-               Left            =   10695
+               Left            =   -10005
                TabIndex        =   10
                TabStop         =   0   'False
                Top             =   330
@@ -3487,7 +3487,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic elSrtm 
                Height          =   9555
-               Left            =   10395
+               Left            =   -10305
                TabIndex        =   9
                TabStop         =   0   'False
                Top             =   330
@@ -3986,7 +3986,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic elEmbParts 
                Height          =   9555
-               Left            =   10095
+               Left            =   -10605
                TabIndex        =   8
                TabStop         =   0   'False
                Top             =   330
@@ -4746,7 +4746,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic elCats 
                Height          =   9555
-               Left            =   45
+               Left            =   -10905
                TabIndex        =   7
                TabStop         =   0   'False
                Top             =   330
@@ -6147,14 +6147,14 @@ Begin VB.Form F1
             AutoSize        =   2
             Object.Width           =   1773
             MinWidth        =   1764
-            TextSave        =   "11.10.2024"
+            TextSave        =   "22.10.2024"
          EndProperty
          BeginProperty Panel3 {8E3867AB-8586-11D1-B16A-00C0F0283628} 
             Style           =   5
             AutoSize        =   2
             Object.Width           =   1244
             MinWidth        =   1235
-            TextSave        =   "14:59"
+            TextSave        =   "16:02"
          EndProperty
          BeginProperty Panel4 {8E3867AB-8586-11D1-B16A-00C0F0283628} 
             AutoSize        =   2
@@ -7379,7 +7379,9 @@ Public Function getReinPos(Row As Long, ByRef pos As clsPos, Optional strWhere A
     
     If Row > colRein2.Count Then Exit Function
     
+    'Set pos = getColPos(colRein2, "?")
     Set pos = colRein2(Row)
+
     
     If Len(strWhere) > 0 Then ' check
         
@@ -12439,8 +12441,10 @@ Private Sub Form_Load()
     F1.tbPart.Buttons("Collapsed").Value = GetSetting("Offtake2", "Size", "Collapsed", tbrUnpressed)
 '    F1.tbPart.Buttons("SelFly").Value = GetSetting("Offtake2", "Size", "SelFly", tbrUnpressed)
     
+    If Not frmSps Is Nothing Then frmSps.setStatus "Загрузка дерева каталогов..."
     loadCatsTree2 CBool(Me.tbCats.Buttons("LoadAll").Value = tbrPressed) And usrCurrent.trusted
     
+    If Not frmSps Is Nothing Then frmSps.setStatus "Загрузка дерева сортамента..."
     loadSrtmTree
     
     ctabMain.BoldCurrent = True
@@ -12507,8 +12511,19 @@ Private Sub Form_Load()
         
         End If
         
-        If lngCurCatListID > 0 Then loadListGrid lngCurCatListID, , False
         
+        
+        
+        If lngCurCatListID > 0 Then
+            If Not frmSps Is Nothing Then frmSps.setStatus "Загрузка списка..."
+            loadListGrid lngCurCatListID, , False
+        End If
+        
+        If Not frmSps Is Nothing And ID > 0 Then
+            Dim cat As clsCat
+            Set cat = cCats(ID)
+            frmSps.setStatus "Загрузка " & left(cat.catName, 40) & "..."
+        End If
         
         tID = loadCatalog(ID, True, 0, False, False) ' перегружаем каталог, изде. выделяем позже, вкладку активируем позже, список загружаем позже
     
@@ -12537,7 +12552,7 @@ Private Sub Form_Load()
     
     
     
-    
+    If Not frmSps Is Nothing Then frmSps.setStatus "Настройка интерфейса..."
     
 '    If StrComp(conn.strSrtmName, conn.strBaseName, vbTextCompare) = 0 Then
         SB.Panels("srv").text = conn.strServerName & " (" & pwset.server & ") " & " : " & conn.strBaseName & " (" & strCurSimBase & ")  "
@@ -12855,6 +12870,7 @@ getColPos_ERR:
     If bQtyZero Then p.posQty = 0
     Col.Add p, strKey
     Set getColPos = p
+    Set p = Nothing
 
 End Function
 
@@ -13238,11 +13254,12 @@ Public Sub loadOfftake2(objectID As Long, strSQL As String, objID As Long, Optio
     
     If Not usrCurrent.strLogin = "l_vibe" Then
         fgOfftake.ColHidden(fgOfftake.ColIndex("key")) = True
-    '    fgOfftake.ColHidden(fgOfftake.ColIndex("srtmID")) = True
+        'fgOfftake.ColHidden(fgOfftake.ColIndex("srtmID")) = True
         fgOfftake.ColHidden(fgOfftake.ColIndex("mc")) = True
+        'fgOfftake.ColHidden(fgOfftake.ColIndex("matID")) = True
         fgOfftake.ColHidden(fgOfftake.ColIndex("offt")) = True
         For i = 0 To fgOfftake.cols - 1
-            If right(LCase(fgOfftake.TextMatrix(0, i)), 2) = "id" Then
+            If right(LCase(fgOfftake.ColKey(i)), 2) = "id" Then
                 fgOfftake.ColHidden(i) = True
             End If
         Next i
@@ -18097,7 +18114,7 @@ Private Sub mnuHelpAbout_Click()
 
     Set frmSps = New frmSplash
     frmSps.lblStatus.top = 1700
-    frmSps.lblStatus.Caption = "Правообладатель: Вибе Леонид, WLEO@ya.ru" & vbNewLine & "Разработка: ИМАПП, Санкт-Петербург, 2018"
+    frmSps.lblStatus.Caption = "Правообладатель: Вибе Леонид, WLEO@ya.ru" & vbNewLine & "Разработка: ИМАПП, Санкт-Петербург, 2024"
     frmSps.Show 0, F1
 
 
@@ -24159,7 +24176,7 @@ Private Sub tbSrtm_ButtonMenuClick(ByVal ButtonMenu As MSComctlLib.ButtonMenu)
         If Not CBool(bDontUseSplash) Then
             Set frmSps = New frmSplash
             frmSps.Show 0, Me
-            loadBaseData frmSps.lblStatus
+            loadBaseData frmSps
             Set frmSps = Nothing
         Else
             loadBaseData Nothing
@@ -27703,13 +27720,13 @@ Private Sub tvCats_NodeClick(ByVal Node As MSComctlLib.Node)
     
     Me.fgCatTree.Tag = ""
 
-    If bFormTabsHide Then
+    'If bFormTabsHide Then
     ctabCat.TabVisible(0) = False
     ctabCat.TabVisible(1) = False
     ctabCat.TabVisible(2) = False
     ctabCat.TabVisible(3) = False
     ctabCat.TabVisible(4) = False
-    End If
+    'End If
 
 '    fgCatTree.Visible = False
 '    fgCatSpec.Visible = False
@@ -27881,13 +27898,13 @@ Private Sub tvCats_NodeClick(ByVal Node As MSComctlLib.Node)
     'fgCatFiles.redraw = flexRDDirect
     End If
     
-    If bFormTabsHide Then
+    'If bFormTabsHide Then
     ctabCat.TabVisible(0) = bVis(0)
     ctabCat.TabVisible(1) = bVis(1)
     ctabCat.TabVisible(2) = bVis(2)
     ctabCat.TabVisible(3) = bVis(3)
     ctabCat.TabVisible(4) = bVis(4)
-    End If
+    'End If
     
     
 
@@ -30796,6 +30813,37 @@ End Sub
 
 
 '/******************************************************************************
+Public Sub loadReinParts2(catID As Long)
+'/******************************************************************************
+
+    On Error GoTo loadReinParts2_ERR
+
+    Dim strSQL As String
+    
+    strSQL = "SELECT * FROM " & conn.strBaseName & ".[dbo].[view_position_rein] where catid=" & catID & " order by [partSortNumber],[posNumber]"
+    
+    Dim RSP As New ADODB.Recordset
+    
+    If bUseCursorClient Then RSP.CursorLocation = adUseClient
+    
+    RSP.Open strSQL, cn_data, adOpenForwardOnly, adLockReadOnly
+    
+    Set Me.fgCatParts.DataSource = RSP
+    
+    RSP.Close
+    
+    Set RSP = Nothing
+
+
+Exit Sub
+
+loadReinParts2_ERR:
+    MsgBox "[" & err.Number & "] " & err.Description, vbCritical, "loadReinParts2 - Error"
+
+End Sub
+
+
+'/******************************************************************************
 Public Sub loadReinParts(catID As Long)
 '/******************************************************************************
     
@@ -31089,8 +31137,9 @@ Public Sub loadPartsGrid(catID As Long, Optional bReloadIfSame As Boolean = True
     
     fgCatParts.Rows = 1
     
-    loadReinParts catID
+    'loadReinParts2 catID
     
+    loadReinParts catID
     loadPartsGrid3
     
     
