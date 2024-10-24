@@ -82,7 +82,13 @@ Public Sub setStatus(str As String)
 
     On Error GoTo setStatus_ERR
     
+    
     If Not bShown Then Exit Sub
+    
+    If bDontUseSplash = 1 Or bAdminMode Then
+        Me.Move 0, 0
+    End If
+    
     
     Me.lblStatus.Caption = str
     Me.lblStatus.Refresh
@@ -125,6 +131,7 @@ End Sub
 
 Private Sub Form_Paint()
     SetAlwaysOnTopMode Me.hwnd, True
+    bShown = True
 End Sub
 
 Private Sub Picture1_Click()

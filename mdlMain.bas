@@ -340,7 +340,7 @@ Public iSetDepID As Integer
 Public bReadOnly As Boolean
 Public bAskSource As Boolean
 
-'Public bAdminMode As Boolean
+Public bAdminMode As Boolean
 
 'Public bCoreLines As Boolean
 'Public bCoreText As Boolean
@@ -671,7 +671,7 @@ Sub Main()
 '        "   Ярлык Offtake2.exe, как правило, расположен на рабочем столе"
     End If
     
-'    bAdminMode = False
+    bAdminMode = False
     
     usrCurrent.strLogin = GetThreadUserName
 '    usrCurrent.strLogin = "l_vibe"
@@ -679,7 +679,7 @@ Sub Main()
     
     If Len(strCmd) > 0 Then
         If Trim(LCase(strCmd)) = "-adm" Then
-'            bAdminMode = True
+            bAdminMode = True
         Else
             usrCurrent.strLogin = Trim(LCase(strCmd))
         End If
@@ -719,14 +719,20 @@ Sub Main()
 '    End If
 
     
-    Set frmSps = New frmSplash
+    
     
 
-    If Not frmSps Is Nothing And bDontUseSplash <> 2 Then frmSps.Show
-    If bDontUseSplash = 1 Then
-        frmSps.Move 0, 0
+
+    
+    
+    If bDontUseSplash <> 2 Then
+    
+        If frmSps Is Nothing Then Set frmSps = New frmSplash
+    
+        frmSps.Show
+        frmSps.Refresh
+    
     End If
-    If Not frmSps Is Nothing Then frmSps.Refresh
     
     
     If Not frmSps Is Nothing Then frmSps.setStatus "Чтение настроек..."
@@ -743,12 +749,13 @@ Sub Main()
 '    conn.strSrtmName = ""
     
 dbconnect:
-    If Not frmSps Is Nothing Then frmSps.setStatus "Подключение к базе данных..."
     
     
     
     
     If Not bAskSource And Len(strCurServer) > 0 And Len(strCurDataBase) > 0 Then
+    
+        If Not frmSps Is Nothing Then frmSps.setStatus "Подключение к базе данных..."
     
         conn.strServerName = strCurServer
         conn.strBaseName = strCurDataBase
@@ -788,7 +795,9 @@ dbconnect:
     End If
     
     
-    If Not frmSps Is Nothing Then frmSps.Visible = True
+    If Not frmSps Is Nothing Then
+        If frmSps.Visible = False Then frmSps.Visible = True
+    End If
     
     
     Set cn_data = conn.con_data
@@ -807,7 +816,9 @@ dbconnect:
     
     If usrCurrent.usrID = 0 Then
     
-        If Not frmSps Is Nothing Then frmSps.Visible = False
+        If Not frmSps Is Nothing Then
+            If frmSps.Visible = False Then frmSps.Visible = True
+        End If
         
         Dim iTrusted As Integer
         
@@ -892,7 +903,10 @@ dbconnect:
         
     End If
     
-    If Not frmSps Is Nothing Then frmSps.Visible = True
+    
+    If Not frmSps Is Nothing Then
+        If frmSps.Visible = False Then frmSps.Visible = True
+    End If
     
 '    If getBool(GetSetting("Offtake2", "Size", "mnuPrefRound03.Checked", True)) Then
 '        rndGlobal.iPosMass = GetSetting("Offtake2", "RndShift", "iPosMass", -2)
@@ -929,6 +943,9 @@ dbconnect:
     
     strDrawingsLibraryFileName = App.path & "\drawings.dgn"
     
+    
+    If Not frmSps Is Nothing Then frmSps.setStatus "Аутентификация..."
+    
     RS.Open "select * from usr where usrID = " & usrCurrent.usrID, cn_srtm, adOpenForwardOnly, adLockOptimistic
     If Not RS.EOF Then
         
@@ -963,7 +980,7 @@ dbconnect:
     usrCurrent.specID = selectLongFromBase(cn_srtm, "department", "specID", "depID", usrCurrent.depID)
     usrCurrent.depName = selectStringFromBase(cn_srtm, "department", "depName", "depID", usrCurrent.depID)
     
-    connectOldBases
+    'connectOldBases
     
     Dim strDifDepName As String
 
@@ -983,6 +1000,8 @@ dbconnect:
         strDifDepName = "(" & usrCurrent.depName & ")"
     End If
     
+    If Not frmSps Is Nothing Then frmSps.setStatus "Чтение конфигурации..."
+    
     '==========================================
     '==========================================
     '==========================================
@@ -1001,7 +1020,7 @@ dbconnect:
     If frmSps Is Nothing Then
         loadBaseData Nothing
     Else
-        loadBaseData frmSps.lblStatus
+        loadBaseData frmSps
     End If
     ' =========================================
     ' =========================================
@@ -1038,10 +1057,10 @@ dbconnect:
     If pwset.canedit Then F1.Caption = F1.Caption & " (PW login OK)"
                 
                 
-'    F1.Caption = F1.Caption & " --- помощь по тел.: 54295"
     
-    F1.Show
+    Unload frmSps
     Set frmSps = Nothing
+    F1.Show
     F1.Refresh
     
     bMainFormLoaded = True
@@ -3762,7 +3781,7 @@ End Function
 
 
 '/******************************************************************************
-Public Function loadBaseData(lbl As Label)
+Public Function loadBaseData(ByRef fSpl As frmSplash)
 '/******************************************************************************
 
     On Error GoTo loadBaseData_ERR
@@ -3770,9 +3789,9 @@ Public Function loadBaseData(lbl As Label)
     Dim RS As New ADODB.Recordset
     
     
-    If Not lbl Is Nothing Then lbl.Caption = "Загрузка объектов"
-    If Not lbl Is Nothing Then lbl.Refresh
+
     
+    If Not fSpl Is Nothing Then fSpl.setStatus "Загрузка объектов"
     
     Set globTables = New Collection
     
@@ -4268,42 +4287,42 @@ Public Function loadBaseData(lbl As Label)
     '================
     
 
-    If Not lbl Is Nothing Then lbl.Caption = "Загрузка единиц измерения"
-    If Not lbl Is Nothing Then lbl.Refresh
+    If Not fSpl Is Nothing Then fSpl.setStatus "Загрузка единиц измерения"
+    'If Not lbl Is Nothing Then lbl.Refresh
 
     loadMeasureUnits
     loadArmClasses
     
-    If Not lbl Is Nothing Then lbl.Caption = "Загрузка стандартов"
-    If Not lbl Is Nothing Then lbl.Refresh
+    If Not fSpl Is Nothing Then fSpl.setStatus "Загрузка стандартов"
+    'If Not lbl Is Nothing Then lbl.Refresh
     
     loadStandards
     
-    If Not lbl Is Nothing Then lbl.Caption = "Загрузка определений позиций"
-    If Not lbl Is Nothing Then lbl.Refresh
+    If Not fSpl Is Nothing Then fSpl.setStatus "Загрузка определений позиций"
+    'If Not lbl Is Nothing Then lbl.Refresh
     
     loadMassCalcs
     loadPosdefs2
     
-    If Not lbl Is Nothing Then lbl.Caption = "Загрузка материалов"
-    If Not lbl Is Nothing Then lbl.Refresh
+    If Not fSpl Is Nothing Then fSpl.setStatus "Загрузка материалов"
+    'If Not lbl Is Nothing Then lbl.Refresh
     
     loadMaterials
     
-    If Not lbl Is Nothing Then lbl.Caption = "Загрузка свойств"
-    If Not lbl Is Nothing Then lbl.Refresh
+    If Not fSpl Is Nothing Then fSpl.setStatus "Загрузка свойств"
+    'If Not lbl Is Nothing Then lbl.Refresh
     
     loadProperties
     loadProperties2
     
-    If Not lbl Is Nothing Then lbl.Caption = "Загрузка сортамента"
-    If Not lbl Is Nothing Then lbl.Refresh
+    If Not fSpl Is Nothing Then fSpl.setStatus "Загрузка сортамента"
+    'If Not lbl Is Nothing Then lbl.Refresh
     
     loadPosdefStd
     loadSortament
     
-    If Not lbl Is Nothing Then lbl.Caption = "Загрузка документов"
-    If Not lbl Is Nothing Then lbl.Refresh
+    If Not fSpl Is Nothing Then fSpl.setStatus "Загрузка документов"
+    'If Not lbl Is Nothing Then lbl.Refresh
     
     loadDocSets
     
