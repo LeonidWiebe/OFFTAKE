@@ -624,6 +624,8 @@ End Function
 Public Function addCmnSpecPosRows(pos As clsPos, spt As spectype, Optional doppos As clsPos = Nothing) As Integer ' возвр. кол-во добавленных строк
     
     
+    On Error GoTo err
+    
     Dim sRunMet As String
     If Len(curSpecCfg.sRunMetOver) > 0 Then
         sRunMet = curSpecCfg.sRunMetOver
@@ -1415,7 +1417,7 @@ Public Function addCmnSpecPosRows(pos As clsPos, spt As spectype, Optional doppo
         
         
         ' unit mass
-        If pos.POS_MCALC.bSpecUMass And pos.POS_MCALC.mcID <> -1 And bNoMass = False And CLng(pos.posUMass * 10000#) > 0 Then
+        If pos.POS_MCALC.bSpecUMass And pos.POS_MCALC.mcID <> -1 And bNoMass = False And Round(pos.posUMass, 3) > 0 Then
         
             If doppos Is Nothing Then
                 Set rt = New clsSRUT
@@ -1454,7 +1456,7 @@ Public Function addCmnSpecPosRows(pos As clsPos, spt As spectype, Optional doppo
         
         
         ' common mass
-        If pos.POS_MCALC.bSpecCMass And pos.POS_MCALC.mcID <> -1 And bNoMass = False And CLng(pos.posCMass * 10000#) > 0 Then
+        If pos.POS_MCALC.bSpecCMass And pos.POS_MCALC.mcID <> -1 And bNoMass = False And Round(pos.posCMass, 3) > 0 Then
         
             If doppos Is Nothing Then
                 Set rt = New clsSRUT
@@ -1540,7 +1542,11 @@ Public Function addCmnSpecPosRows(pos As clsPos, spt As spectype, Optional doppo
     
     addCmnSpecPosRows = qty
     
+    Exit Function
+err:
     
+    addCmnSpecPosRows = qty
+    'Resume Next
     
 End Function
 

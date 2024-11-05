@@ -1,0 +1,94 @@
+start createCmnSpecDrawStruct(), cSpParts.Count = 2014
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 0
+do iter begin
+cSpecUnits.Add spunit
+do iter end, qty = 1

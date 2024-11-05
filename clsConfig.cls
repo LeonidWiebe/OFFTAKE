@@ -60,7 +60,7 @@ Private Sub ReadData()
 '/******************************************************************************
 On Error GoTo ReadData_ERR
     
-    Dim i As Integer
+    Dim I As Integer
     Set SimViews = New Collection
     Set SysVariables = New Dictionary
     Set TempViewTabs = New Collection
@@ -131,7 +131,9 @@ On Error GoTo ReadData_ERR
     
     reincfg.readXmlNodeByPath oXMLDoc, "Settings/Workspace/Reinforcement/Round"
     
-    intfcfg.readXmlNodeByPath oXMLDoc, "Settings/Workspace/Interface/Common"
+    'intfcfg.readXmlNodeByPath oXMLDoc, "Settings/Workspace/Interface/Common"
+    intfcfg.readXmlNodeByPath oXMLDoc, "Settings/Workspace/Interface"
+    
     
     'Dim p As New clsPart
     'Call p.genSortNumber("MD-25-25", 91)
@@ -264,7 +266,7 @@ On Error GoTo ReadData_ERR
     Dim osp As colAts ' секци€ <spcfg/>
     For Each osp In speccfg("Part")("spec_text_name")
         'Set o = getColItem(scfgs, CStr(osp.objID))
-        Set o = getOrAddColItem(scfgs, CStr(osp.atID), "clsSCfg")
+        Set o = getOrAddColItem(scfgs, osp.atIDent, "clsSCfg")
         If Not o Is Nothing Then Set o.o_spec_text_name = osp
     Next
     
@@ -302,9 +304,9 @@ On Error GoTo ReadData_ERR
                     
                     If Not oChildNode2.Attributes Is Nothing Then
                     
-                        For i = 0 To oChildNode2.Attributes.length - 1
-                            frml.props.AddProp oChildNode2.Attributes(i).nodeName, oChildNode2.Attributes(i).nodeValue
-                        Next i
+                        For I = 0 To oChildNode2.Attributes.length - 1
+                            frml.props.AddProp oChildNode2.Attributes(I).nodeName, oChildNode2.Attributes(I).nodeValue
+                        Next I
                         
                         If frml.props.existsProperty("name") Then frml.objname = frml.props("name").propValue
                         
@@ -373,246 +375,443 @@ On Error GoTo ReadData_ERR
                 Next
             End If
             
-            
-            
         End If
-    
-        Set oChildNode = oNode.getElementsByTagName("Interface")(0)
-        If Not oChildNode Is Nothing Then
         
-            If oChildNode.getElementsByTagName("Tab").length > 0 Then
+        
+        Dim ca As colAts
+        Dim caa As colAts
+        Dim caaa As colAts
+        Dim bAccess As Boolean
+        Dim Clmn As clsObj
+        Dim im As clsObj
+        
+        For Each ca In intfcfg
+            If ca.atname = "Tab" And ca.attval("name") = "Wise" Then
             
-                For Each oChildNode2 In oChildNode.getElementsByTagName("Tab")
+                For Each caa In ca
+                    If caa.atname = "Connect" Then
                     
-                    If Not oChildNode2.getAttributeNode("name") Is Nothing Then
-                        If oChildNode2.getAttribute("name") = "Wise" Then
-                        
-                            If oChildNode2.getElementsByTagName("Connect").length > 0 Then
-                            
-                                Set pwsets = New Collection
-                        
-                                For Each oChildNode3 In oChildNode2.getElementsByTagName("Connect")
-                                
-                                    Dim pws As New clsDBCon
-                                
-                                    If Not oChildNode3.getAttributeNode("name") Is Nothing Then
-                                        pws.text = oChildNode3.getAttribute("name")
-                                    End If
-                                
-                                    If Not oChildNode3.getAttributeNode("server") Is Nothing Then
-                                        pws.server = oChildNode3.getAttribute("server")
-                                    End If
-                                
-                                    If Not oChildNode3.getAttributeNode("base") Is Nothing Then
-                                        pws.database = oChildNode3.getAttribute("base")
-                                    End If
-                                
-                                    If Not oChildNode3.getAttributeNode("login") Is Nothing Then
-                                        pws.login = oChildNode3.getAttribute("login")
-                                    End If
-                                
-                                    If Not oChildNode3.getAttributeNode("root") Is Nothing Then
-                                        pws.root = Val(oChildNode3.getAttribute("root"))
-                                        pws.ispwdb = True
-                                    Else
-                                        pws.ispwdb = False
-                                    End If
-                                
-                                    If Not oChildNode3.getAttributeNode("glev") Is Nothing Then
-                                        pws.glev = Val(oChildNode3.getAttribute("glev"))
-                                    End If
-                                    
-    'Set oChildNode4 = oChildNode3.selectSingleNode("//Tab[@name='Wise']/Connect/Filters/Standard") ' RAHMAT
-    Dim xmlnd As MSXML2.IXMLDOMNode
-    
-    Set xmlnd = oChildNode3.selectSingleNode("Filters/Standard")
-    If Not xmlnd Is Nothing Then
-        pws.sql_filter = xmlnd.text
-    End If
-                                                
-'    Set xmlnd = oChildNode3.selectSingleNode("Filters/Regex")
-'    If Not xmlnd Is Nothing Then
-'        Set xmlnd = xmlnd.firstChild
-'        Do Until xmlnd Is Nothing
-'            If xmlnd.nodeType <> NODE_COMMENT Then
-'                Dim str As String
-'                str = xmlnd.text
-'                pws.regexps.Add str, xmlnd.nodeName
-'            End If
-'            Set xmlnd = xmlnd.nextSibling
-'        Loop
-'    End If
-                                                
-                                    If Len(pws.text) > 0 And Len(pws.server) > 0 And Len(pws.database) > 0 And Len(pws.login) > 0 Then
-                                                
-                                        Set oChildNode4 = oChildNode3.getElementsByTagName("Department")(0)
-                                        If oChildNode4 Is Nothing Then
-                                        
-                                            pwsets.Add pws, pws.text
-                                        
-                                        Else ' ограничение видимости по отделам
-                                            For Each oChildNode4 In oChildNode3.getElementsByTagName("Department")
-                                                If usrCurrent.depID = Val(oChildNode4.getAttribute("ID")) Then
-                                                
-                                                    If Not oChildNode4.getAttributeNode("edit_grid") Is Nothing Then pws.canedit_grid = CBool(oChildNode4.getAttribute("edit_grid"))
-                                                    If Not oChildNode4.getAttributeNode("edit_tree") Is Nothing Then pws.canedit_tree = CBool(oChildNode4.getAttribute("edit_tree"))
-                                                
-                                                    pwsets.Add pws, pws.text
+                        Dim pwss As New clsDBCon
                     
-                                                End If
-                                            Next
-                                        End If
-                                    
-                                    End If
-                                    
-                                    Set pws = Nothing
-                                
-                                Next
-                                
-                                If pwsets.Count > 0 Then
-                            
-                                    Dim ind As Integer
-                                    ind = GetSetting("Offtake2", "pw", "connection index", 0) + 1
-                            
-                                    If ind < 1 Then ind = 1
-                                    If ind > pwsets.Count Then ind = pwsets.Count
-                            
-                                    Set pwset = pwsets(ind)
-                                Else
-                                    Set pwset = New clsDBCon
+                        pwss.text = caa.attval("name")
+                        pwss.server = caa.attval("server")
+                        pwss.database = caa.attval("base")
+                        pwss.login = caa.attval("login")
+                        pwss.glev = Val(caa.attval("glev"))
+                        pwss.root = Val(caa.attval("root"))
+                        
+                        If pwss.root > 0 Then pwss.ispwdb = True
+                        
+                        pwss.sql_filter = caa("Filters")("Standard")(1).atname
+                        
+                        
+                        bAccess = True
+                        For Each caaa In caa
+                            If caaa.atname = "Department" Then
+                                bAccess = False
+                                If usrCurrent.depID = Val(caaa.attval("ID")) Then
+                                    pwss.canedit_grid = caaa.attval("edit_grid", True)
+                                    pwss.canedit_tree = caaa.attval("edit_tree", True)
+                                    pwsets.Add pwss, pwss.text
+                                    Exit For
                                 End If
-                                
-                            
                             End If
-                        
-                        ElseIf oChildNode2.getAttribute("name") = "Rein" Then
-                        
-                            If oChildNode2.getElementsByTagName("Import").length > 0 Then
-                            
-                                For Each oChildNode3 In oChildNode2.getElementsByTagName("Import")
-                        
-                                    If Not oChildNode3 Is Nothing Then
-                                    
-                                        If Not oChildNode3.getAttributeNode("key") Is Nothing Then
-                                        
-                                            Dim im As New clsObj
-                                            
-                                            im.objname = "Import"
-                                            im.KEY = oChildNode3.getAttribute("key")
-                                            
-                                            im.props.AddProp "key", im.KEY
-                                            
-                                            If Not oChildNode3.getAttributeNode("app") Is Nothing Then
-                                                im.props.AddProp "app", oChildNode3.getAttribute("app")
-                                            Else
-                                                im.props.AddProp "app", "Excel"
-                                            End If
-                                            
-                                            If Not oChildNode3.getAttributeNode("name") Is Nothing Then
-                                                im.props.AddProp "name", oChildNode3.getAttribute("name")
-                                            Else
-                                                im.props.AddProp "name", "Import " & im.KEY
-                                            End If
-                                            
-                                            If im.props("app").propValue = "Excel" Then
-                                                If Not oChildNode3.getAttributeNode("startrow") Is Nothing Then
-                                                    im.props.AddProp "startrow", CLng(oChildNode3.getAttribute("startrow"))
-                                                Else
-                                                    im.props.AddProp "startrow", CLng(1)
-                                                End If
-                                            End If
-                                            
-                                            ' атрибут - можно ли обновл€ть (true) или каталог перед заполнением должен быть пустым (false)
-                                            If Not oChildNode3.getAttributeNode("update") Is Nothing Then
-                                                im.props.AddProp "update", oChildNode3.getAttribute("update")
-                                            Else
-                                                im.props.AddProp "update", "false"
-                                            End If
-        
-        
-                                            i = 0 ' column index
-                                            
-        '                                    <Column index="0" key="posnum" required="true"/>
-        '                                    <Column index="1" key="diameter" required="false"/>
-        '                                    <Column index="2" key="quantity" required="false"/>
-        '                                    <Column index="3" key="length" required="false"/>
-        '                                    <Column index="4" key="srtmID" required="true"/>
-        '                                    <Column index="5" key="sketch" required="false"/>
-                                            For Each oChildNode4 In oChildNode3.getElementsByTagName("Column")
-                                            
-                                                Dim Clmn As New clsObj
-                                                
-                                                If Not oChildNode4.getAttributeNode("key") Is Nothing Then
-                                                
-                                                    Clmn.objname = "Column"
-                                                    Clmn.KEY = oChildNode4.getAttribute("key")
-                                                
-                                                    Clmn.props.AddProp "key", Clmn.KEY
-                                                    
-                                                    If Not oChildNode4.getAttributeNode("index") Is Nothing Then
-                                                        i = CLng(Val(oChildNode4.getAttribute("index")))
-                                                    End If
-                                                    Clmn.props.AddProp "index", i
-                                                    i = i + 1
-                                                    
-                                                    If Not oChildNode4.getAttributeNode("required") Is Nothing Then
-                                                        Clmn.props.AddProp "required", CBool(oChildNode4.getAttribute("required"))
-                                                    Else
-                                                        Clmn.props.AddProp "required", False
-                                                    End If
-                                                    
-                                                    addColObj im.kinder, Clmn, Clmn.KEY
-                                                    Set Clmn = Nothing
-                                                    
-                                                End If
-                                            
-                                            Next
-                                            
-                                            Set oChildNode4 = oChildNode3.getElementsByTagName("Material")(0)
-                                            If Not oChildNode4 Is Nothing Then
-                                                If Not oChildNode4.getAttributeNode("ID") Is Nothing Then
-                                                    im.props.AddProp "matID", CLng(Val(oChildNode4.getAttribute("ID")))
-                                                End If
-                                                Set oChildNode4 = Nothing
-                                            End If
-                                            
-                                            'imps.Add im, im.KEY
-                                            addColObj imps, im, im.KEY
-                                            Set im = Nothing
-                                            
-                                        End If
-                                    
-                                    End If ' oChildNode3
-                        
-                        
-                                Next
-                                
-                            End If
-                        
-                        
-                        ElseIf oChildNode2.getAttribute("name") = "Part" Then
-                        
-        
-                            Set oChildNode3 = oChildNode2.getElementsByTagName("Sketches")(0)
-                            If Not oChildNode3 Is Nothing Then
-                                If Not oChildNode3.getAttributeNode("path") Is Nothing Then
-                                    globPartTypes_sketch_path = oChildNode3.getAttribute("path")
-                                End If
-                                If Not oChildNode3.getAttributeNode("ext") Is Nothing Then
-                                    globPartTypes_sketch_ext = oChildNode3.getAttribute("ext")
-                                End If
-                                Set oChildNode3 = Nothing
-                            End If
-        
+                        Next caaa
+                    
+                        If bAccess Then ' секций "Department" нет, доступ разрешен
+                            pwss.ispwdb = True
+                            pwsets.Add pwss, pwss.text
                         End If
                         
+                        Set pwss = Nothing
+                        
                     End If
+                Next caa
                 
-                Next
                 
-            End If
+                If pwsets.Count > 0 Then
+            
+                    I = GetSetting("Offtake2", "pw", "connection index", 0) + 1
+            
+                    If I < 1 Then I = 1
+                    If I > pwsets.Count Then I = pwsets.Count
+            
+                    Set pwset = pwsets(I)
+                Else
+                    Set pwset = New clsDBCon
+                End If
+            
+            
+            ElseIf ca.atname = "Tab" And ca.attval("name") = "Rein" Then
+            
+                For Each caa In ca
+                    If caa.atname = "Import" Then
+                    
+                        If caa.attval("key") > 0 Then ' необходим дл€ меню
+                    
+                            Set im = New clsObj
+                            
+                            im.objname = "Import"
+                            im.KEY = caa.attval("key")
+                            
+                            im.props.AddProp "key", im.KEY
+                            
+                            im.props.AddProp "app", caa.attval("app", "Excel")
+                            im.props.AddProp "name", caa.attval("name", "Import " & im.KEY)
+                            
+                            If im.props("app").propValue = "Excel" Then
+                                im.props.AddProp "startrow", caa.attval("startrow", CLng(1))
+                            End If
 
-        End If
+                            ' атрибут - можно ли обновл€ть (true) или каталог перед заполнением должен быть пустым (false)
+                            im.props.AddProp "update", caa.attval("update", False)
+                                            
+
+                            For Each caaa In caa
+                                If caaa.atname = "Column" Then
+                                
+                                    Set Clmn = New clsObj
+                                    
+                                    If caaa.attval("key") > 0 Then
+                                    
+                                        Clmn.objname = "Column"
+                                        Clmn.KEY = caaa.attval("key")
+                                    
+                                        Clmn.props.AddProp "key", Clmn.KEY
+                                        
+                                        Clmn.props.AddProp "index", caaa.attval("index", 0)
+                                        
+                                        Clmn.props.AddProp "required", caaa.attval("required", False)
+
+                                        addColObj im.kinder, Clmn, Clmn.KEY
+                                        Set Clmn = Nothing
+                                        
+                                    End If
+                                
+                                ElseIf caaa.atname = "Material" Then
+                                
+                                    If caaa.attval("ID", 0) > 0 Then im.props.AddProp "matID", caaa.attval("ID", 0)
+                                    
+                                End If
+                            Next caaa
+                            
+                            
+                            addColObj imps, im, im.KEY
+                            Set im = Nothing
+
+
+                    
+                        End If
+                    
+                    ElseIf caa.atname = "Export" Then
+                    
+                        If caa.attval("key") > 0 Then ' необходим дл€ меню
+                    
+                            Set im = New clsObj
+                            
+                            im.objname = "Export"
+                            im.KEY = caa.attval("key")
+                            
+                            im.props.AddProp "key", im.KEY
+                            
+                            im.props.AddProp "app", caa.attval("app", "Excel")
+                            im.props.AddProp "name", caa.attval("name", "Export " & im.KEY)
+                            
+                            If im.props("app").propValue = "Excel" Then
+                                im.props.AddProp "startrow", caa.attval("startrow", CLng(1))
+                            End If
+                            
+                            For Each caaa In caa
+                                If caaa.atname = "Column" Then
+                                
+                                    Set Clmn = New clsObj
+                                    
+                                    If caaa.attval("key") > 0 Then
+                                    
+                                        Clmn.objname = "Column"
+                                        Clmn.KEY = caaa.attval("key")
+                                    
+                                        Clmn.props.AddProp "key", Clmn.KEY
+                                        
+                                        Clmn.props.AddProp "srckey", caaa.attval("srckey", Clmn.KEY) ' source table key
+                                        Clmn.props.AddProp "rowdata", caaa.attval("rowdata", False) ' written to fg rowdata
+                                        
+                                        Clmn.props.AddProp "index", caaa.attval("index", 0)
+                                        
+                                        Clmn.props.AddProp "dec", caaa.attval("dec", False)
+
+                                        addColObj im.kinder, Clmn, Clmn.KEY
+                                        Set Clmn = Nothing
+                                        
+                                    End If
+                                
+                                End If
+                            Next caaa
+                            
+                            
+                            addColObj imps, im, im.KEY
+                            Set im = Nothing
+                        
+                         End If
+                        
+                    End If
+                Next caa
+            
+            
+            ElseIf ca.atname = "Tab" And ca.attval("name") = "Part" Then
+            
+                globPartTypes_sketch_path = ca("Sketches").attval("path")
+                globPartTypes_sketch_ext = ca("Sketches").attval("ext")
+            
+
+            Else ' ...
+            
+            End If
+        
+        Next ca
+        
+        'End
+    
+'        Set oChildNode = oNode.getElementsByTagName("Interface")(0)
+'        If Not oChildNode Is Nothing Then
+'
+'            If oChildNode.getElementsByTagName("Tab").length > 0 Then
+'
+'                For Each oChildNode2 In oChildNode.getElementsByTagName("Tab")
+'
+'                    If Not oChildNode2.getAttributeNode("name") Is Nothing Then
+                        
+'                        If oChildNode2.getAttribute("name") = "Wise" Then
+'
+'                            If oChildNode2.getElementsByTagName("Connect").length > 0 Then
+'
+'                                Set pwsets = New Collection
+'
+'                                For Each oChildNode3 In oChildNode2.getElementsByTagName("Connect")
+'
+'                                    Dim pws As New clsDBCon
+'
+'                                    If Not oChildNode3.getAttributeNode("name") Is Nothing Then
+'                                        pws.text = oChildNode3.getAttribute("name")
+'                                    End If
+'
+'                                    If Not oChildNode3.getAttributeNode("server") Is Nothing Then
+'                                        pws.server = oChildNode3.getAttribute("server")
+'                                    End If
+'
+'                                    If Not oChildNode3.getAttributeNode("base") Is Nothing Then
+'                                        pws.database = oChildNode3.getAttribute("base")
+'                                    End If
+'
+'                                    If Not oChildNode3.getAttributeNode("login") Is Nothing Then
+'                                        pws.login = oChildNode3.getAttribute("login")
+'                                    End If
+'
+'                                    If Not oChildNode3.getAttributeNode("root") Is Nothing Then
+'                                        pws.root = Val(oChildNode3.getAttribute("root"))
+'                                        pws.ispwdb = True
+'                                    Else
+'                                        pws.ispwdb = False
+'                                    End If
+'
+'                                    If Not oChildNode3.getAttributeNode("glev") Is Nothing Then
+'                                        pws.glev = Val(oChildNode3.getAttribute("glev"))
+'                                    End If
+'
+'    'Set oChildNode4 = oChildNode3.selectSingleNode("//Tab[@name='Wise']/Connect/Filters/Standard") ' RAHMAT
+'    Dim xmlnd As MSXML2.IXMLDOMNode
+'
+'    Set xmlnd = oChildNode3.selectSingleNode("Filters/Standard")
+'    If Not xmlnd Is Nothing Then
+'        pws.sql_filter = xmlnd.text
+'    End If
+'
+''    Set xmlnd = oChildNode3.selectSingleNode("Filters/Regex")
+''    If Not xmlnd Is Nothing Then
+''        Set xmlnd = xmlnd.firstChild
+''        Do Until xmlnd Is Nothing
+''            If xmlnd.nodeType <> NODE_COMMENT Then
+''                Dim str As String
+''                str = xmlnd.text
+''                pws.regexps.Add str, xmlnd.nodeName
+''            End If
+''            Set xmlnd = xmlnd.nextSibling
+''        Loop
+''    End If
+'
+'                                    If Len(pws.text) > 0 And Len(pws.server) > 0 And Len(pws.database) > 0 And Len(pws.login) > 0 Then
+'
+'                                        Set oChildNode4 = oChildNode3.getElementsByTagName("Department")(0)
+'                                        If oChildNode4 Is Nothing Then
+'
+'                                            pwsets.Add pws, pws.text
+'
+'                                        Else ' ограничение видимости по отделам
+'                                            For Each oChildNode4 In oChildNode3.getElementsByTagName("Department")
+'                                                If usrCurrent.depID = Val(oChildNode4.getAttribute("ID")) Then
+'
+'                                                    If Not oChildNode4.getAttributeNode("edit_grid") Is Nothing Then pws.canedit_grid = CBool(oChildNode4.getAttribute("edit_grid"))
+'                                                    If Not oChildNode4.getAttributeNode("edit_tree") Is Nothing Then pws.canedit_tree = CBool(oChildNode4.getAttribute("edit_tree"))
+'
+'                                                    pwsets.Add pws, pws.text
+'
+'                                                End If
+'                                            Next
+'                                        End If
+'
+'                                    End If
+'
+'                                    Set pws = Nothing
+'
+'                                Next
+'
+'                                If pwsets.Count > 0 Then
+'
+'                                    Dim ind As Integer
+'                                    ind = GetSetting("Offtake2", "pw", "connection index", 0) + 1
+'
+'                                    If ind < 1 Then ind = 1
+'                                    If ind > pwsets.Count Then ind = pwsets.Count
+'
+'                                    Set pwset = pwsets(ind)
+'                                Else
+'                                    Set pwset = New clsDBCon
+'                                End If
+'
+'
+'                            End If
+'
+'                        ElseIf oChildNode2.getAttribute("name") = "Rein" Then
+'
+'                            If oChildNode2.getElementsByTagName("Import").length > 0 Then
+'
+'                                For Each oChildNode3 In oChildNode2.getElementsByTagName("Import")
+'
+'                                    If Not oChildNode3 Is Nothing Then
+'
+'                                        If Not oChildNode3.getAttributeNode("key") Is Nothing Then
+'
+'                                            Set im = New clsObj
+'
+'                                            im.objname = "Import"
+'                                            im.KEY = oChildNode3.getAttribute("key")
+'
+'                                            im.props.AddProp "key", im.KEY
+'
+'                                            If Not oChildNode3.getAttributeNode("app") Is Nothing Then
+'                                                im.props.AddProp "app", oChildNode3.getAttribute("app")
+'                                            Else
+'                                                im.props.AddProp "app", "Excel"
+'                                            End If
+'
+'                                            If Not oChildNode3.getAttributeNode("name") Is Nothing Then
+'                                                im.props.AddProp "name", oChildNode3.getAttribute("name")
+'                                            Else
+'                                                im.props.AddProp "name", "Import " & im.KEY
+'                                            End If
+'
+'                                            If im.props("app").propValue = "Excel" Then
+'                                                If Not oChildNode3.getAttributeNode("startrow") Is Nothing Then
+'                                                    im.props.AddProp "startrow", CLng(oChildNode3.getAttribute("startrow"))
+'                                                Else
+'                                                    im.props.AddProp "startrow", CLng(1)
+'                                                End If
+'                                            End If
+'
+'                                            ' атрибут - можно ли обновл€ть (true) или каталог перед заполнением должен быть пустым (false)
+'                                            If Not oChildNode3.getAttributeNode("update") Is Nothing Then
+'                                                im.props.AddProp "update", oChildNode3.getAttribute("update")
+'                                            Else
+'                                                im.props.AddProp "update", "false"
+'                                            End If
+'
+'
+'                                            i = 0 ' column index
+'
+'        '                                    <Column index="0" key="posnum" required="true"/>
+'        '                                    <Column index="1" key="diameter" required="false"/>
+'        '                                    <Column index="2" key="quantity" required="false"/>
+'        '                                    <Column index="3" key="length" required="false"/>
+'        '                                    <Column index="4" key="srtmID" required="true"/>
+'        '                                    <Column index="5" key="sketch" required="false"/>
+'                                            For Each oChildNode4 In oChildNode3.getElementsByTagName("Column")
+'
+'                                                Set Clmn = New clsObj
+'
+'                                                If Not oChildNode4.getAttributeNode("key") Is Nothing Then
+'
+'                                                    Clmn.objname = "Column"
+'                                                    Clmn.KEY = oChildNode4.getAttribute("key")
+'
+'                                                    Clmn.props.AddProp "key", Clmn.KEY
+'
+'                                                    If Not oChildNode4.getAttributeNode("index") Is Nothing Then
+'                                                        i = CLng(Val(oChildNode4.getAttribute("index")))
+'                                                    End If
+'                                                    Clmn.props.AddProp "index", i
+'                                                    i = i + 1
+'
+'                                                    If Not oChildNode4.getAttributeNode("required") Is Nothing Then
+'                                                        Clmn.props.AddProp "required", CBool(oChildNode4.getAttribute("required"))
+'                                                    Else
+'                                                        Clmn.props.AddProp "required", False
+'                                                    End If
+'
+'                                                    addColObj im.kinder, Clmn, Clmn.KEY
+'                                                    Set Clmn = Nothing
+'
+'                                                End If
+'
+'                                            Next
+'
+'                                            Set oChildNode4 = oChildNode3.getElementsByTagName("Material")(0)
+'                                            If Not oChildNode4 Is Nothing Then
+'                                                If Not oChildNode4.getAttributeNode("ID") Is Nothing Then
+'                                                    im.props.AddProp "matID", CLng(Val(oChildNode4.getAttribute("ID")))
+'                                                End If
+'                                                Set oChildNode4 = Nothing
+'                                            End If
+'
+'                                            'imps.Add im, im.KEY
+'                                            addColObj imps, im, im.KEY
+'                                            Set im = Nothing
+'
+'                                        End If
+'
+'                                    End If ' oChildNode3
+'
+'
+'                                Next
+'
+'                            End If
+'
+'
+'                        ElseIf oChildNode2.getAttribute("name") = "Part" Then
+'
+'
+'                            Set oChildNode3 = oChildNode2.getElementsByTagName("Sketches")(0)
+'                            If Not oChildNode3 Is Nothing Then
+'                                If Not oChildNode3.getAttributeNode("path") Is Nothing Then
+'                                    globPartTypes_sketch_path = oChildNode3.getAttribute("path")
+'                                End If
+'                                If Not oChildNode3.getAttributeNode("ext") Is Nothing Then
+'                                    globPartTypes_sketch_ext = oChildNode3.getAttribute("ext")
+'                                End If
+'                                Set oChildNode3 = Nothing
+'                            End If
+'
+'                        End If
+'
+'                    End If
+'
+'                Next
+'
+'            End If
+'
+'        End If
+    
+    
+'    End
     
         
         Dim prjID As Long
@@ -724,13 +923,13 @@ On Error GoTo ReadData_ERR
                                 arBases(0) = clst.sTableName
                                 strCurDataBase = clst.sTableName
                             Else
-                                For i = 0 To UBound(arBases)
-                                    If StrComp(arBases(i), clst.sTableName, vbTextCompare) = 0 Then
-                                        i = -1 ' уже есть такой
+                                For I = 0 To UBound(arBases)
+                                    If StrComp(arBases(I), clst.sTableName, vbTextCompare) = 0 Then
+                                        I = -1 ' уже есть такой
                                         Exit For
                                     End If
-                                Next i
-                                If i > -1 Then
+                                Next I
+                                If I > -1 Then
                                     ReDim Preserve arBases(UBound(arBases) + 1)
                                     arBases(UBound(arBases)) = clst.sTableName
                                 End If
@@ -994,8 +1193,8 @@ Public Function GetChildNodesData(ByVal Node As MSXML2.IXMLDOMElement, ByVal ID 
     
     Dim ChildNode As MSXML2.IXMLDOMElement
     
-    Dim iName$, i%
-    i = 0
+    Dim iName$, I%
+    I = 0
     
 '    If ChildNodes.length > 0 Then
 '        For Each ChildNode In ChildNodes(0).ChildNodes
@@ -1057,7 +1256,7 @@ Public Sub checkTabViewErrors(TabIndex As Integer)
     
     Dim ErrClmns As String: ErrClmns = vbNullString 'дл€ записи заголовков столбцов с ошибками
     
-    Dim i%, j%, errcnt%
+    Dim I%, j%, errcnt%
     Dim RegExp As RegExp: Set RegExp = New RegExp
     
 '    Dim rrr As New RegExp
@@ -1084,16 +1283,16 @@ Public Sub checkTabViewErrors(TabIndex As Integer)
                     If vErr.ErrorExpression = "%Unique%" Then
                         'ѕроверка на уникальность
                         Dim UniqColl As Dictionary: Set UniqColl = New Dictionary
-                        For i = 1 To .Rows - 1
-                            If .RowHidden(i) Or .IsSubtotal(i) Then GoTo LNextRow1
-                            If Not vErr.Trigger And Not UniqColl.exists(.TextMatrix(i, j)) Then
-                                Call UniqColl.Add(.TextMatrix(i, j), Empty)
+                        For I = 1 To .Rows - 1
+                            If .RowHidden(I) Or .IsSubtotal(I) Then GoTo LNextRow1
+                            If Not vErr.Trigger And Not UniqColl.exists(.TextMatrix(I, j)) Then
+                                Call UniqColl.Add(.TextMatrix(I, j), Empty)
                             Else
                                 If Not InStr(ErrClmns, .ColKey(j)) > 0 Then
                                     If Len(ErrClmns) > 0 Then ErrClmns = ErrClmns & ", "
                                     ErrClmns = ErrClmns & "'" & .ColKey(j) & "'"
                                 End If
-                                .Cell(flexcpBackColor, i, j, i, j) = lngRed
+                                .Cell(flexcpBackColor, I, j, I, j) = lngRed
                                 errcnt = errcnt + 1
                             End If
 LNextRow1:
@@ -1101,15 +1300,15 @@ LNextRow1:
                         Set UniqColl = Nothing
                     Else
                         RegExp.Pattern = vErr.ErrorExpression
-                        For i = 1 To .Rows - 1
-                            If .RowHidden(i) Or .IsSubtotal(i) Then GoTo LNextRow2
-                            If RegExp.Test(.TextMatrix(i, j)) = CBool(vErr.Trigger) Then
+                        For I = 1 To .Rows - 1
+                            If .RowHidden(I) Or .IsSubtotal(I) Then GoTo LNextRow2
+                            If RegExp.Test(.TextMatrix(I, j)) = CBool(vErr.Trigger) Then
                                 If Not InStr(ErrClmns, .ColKey(j)) > 0 Then
                                     If Len(ErrClmns) > 0 Then ErrClmns = ErrClmns & ", "
                                     ErrClmns = ErrClmns & "'" & .ColKey(j) & "'"
                                 End If
                             
-                                .Cell(flexcpBackColor, i, j, i, j) = lngRed
+                                .Cell(flexcpBackColor, I, j, I, j) = lngRed
                                 errcnt = errcnt + 1
                             End If
 LNextRow2:

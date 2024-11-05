@@ -18,7 +18,7 @@ Attribute VB_Ext_KEY = "SavedWithClassBuilder6" ,"Yes"
 Option Explicit
 
 Public atname As String
-Public atID As Long
+Public atIDent As String
 
 Public ats As Collection ' of clsAtt
 
@@ -172,22 +172,32 @@ att_ERR:
 End Property
 
 '/******************************************************************************
-Public Property Get attval(attName As String) As String
+Public Property Get attval(attName As String, Optional defVal As Variant = "") As Variant
 '/******************************************************************************
 
     On Error GoTo att_ERR
+    
+
+
     
     Dim att As clsAtt
     
     Set att = ats(attName)
     
-    attval = att.attValue
+    
+    
+    If typeName(defVal) = "Boolean" Then
+        attval = CBool(att.attValue)
+    Else
+        attval = att.attValue
+    End If
+
 
 
 Exit Property
 
 att_ERR:
-    attval = ""
+    attval = defVal
     'MsgBox "[" & err.Number & "] " & err.Description, vbCritical, "att - Error"
 
 End Property
@@ -298,7 +308,7 @@ Public Function readXmlNode(ByRef d As MSXML2.DOMDocument, ByRef cnr As MSXML2.I
         Dim oo As New colAts
         
         oo.atname = cn.nodeName
-        'oo.atID = -1
+        'oo.atIDent = "-1"
            
         If cn.nodeType = NODE_TEXT Then
         
@@ -315,8 +325,14 @@ Public Function readXmlNode(ByRef d As MSXML2.DOMDocument, ByRef cnr As MSXML2.I
             If Not cn.Attributes Is Nothing Then
                 For i = 0 To cn.Attributes.length - 1
                 
-                    If cn.Attributes(i).nodeName = "id" Then
-                        oo.atID = Val(cn.Attributes(i).nodeValue)
+                    If StrComp(cn.Attributes(i).nodeName, "id", vbTextCompare) = 0 Then
+                        oo.atIDent = cn.Attributes(i).nodeValue
+                    ElseIf StrComp(cn.Attributes(i).nodeName, "index", vbTextCompare) = 0 Then
+                        oo.atIDent = cn.Attributes(i).nodeValue
+                    ElseIf StrComp(cn.Attributes(i).nodeName, "key", vbTextCompare) = 0 Then
+                        oo.atIDent = cn.Attributes(i).nodeValue
+                    'ElseIf cn.Attributes(i).nodeName = "name" Then
+                    '    oo.atIDent = cn.Attributes(i).nodeValue ' может сбить забор элементов по ID
                     End If
                     
                     oo.AddAttByNameValue cn.Attributes(i).nodeName, cn.Attributes(i).nodeValue
@@ -324,10 +340,10 @@ Public Function readXmlNode(ByRef d As MSXML2.DOMDocument, ByRef cnr As MSXML2.I
                 Next i
             End If
             
-            If oo.atID = 0 Then
+            If Len(oo.atIDent) = 0 Then
                 Set oo = AddElem(oo, oo.atname)
             Else
-                Set oo = AddElem(oo, oo.atname & CStr(oo.atID))
+                Set oo = AddElem(oo, oo.atname & oo.atIDent)
             End If
             
             

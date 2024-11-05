@@ -501,6 +501,8 @@ Public strCurProvider As String
 
 Public curSpecCfg As clsSCfg
 
+Public bLogGlobal As Boolean
+
 '===========================================================
 ' execute program
 Public Declare Function ShellExecute Lib "shell32.dll" Alias _
@@ -663,8 +665,7 @@ Sub Main()
         'MsgBox (GetThreadUserName)
         If GetThreadUserName = "l_vibe" Or GetThreadUserName = "Администратор" Then
         Else
-            MsgBox "   Запуск Offtake блокирован, так как требуется запуск с сетевого ресурса   " & vbNewLine & _
-            "   Для локального запуска можно использовать соотвествующий параметр #   "
+            MsgBox "   Запускайте пожалуйста Offtake с ярлыка на рабочем столе.   "
             Exit Sub
         End If
 '        "   Это нужно для того чтобы у Вас всегда запускалась актуальная версия   " & vbNewLine & _
@@ -677,12 +678,43 @@ Sub Main()
 '    usrCurrent.strLogin = "l_vibe"
     
     
+    Dim iCmdPos As Integer
+    Dim ar() As String
+    Dim iArPos As Integer
+    
     If Len(strCmd) > 0 Then
-        If Trim(LCase(strCmd)) = "-adm" Then
-            bAdminMode = True
-        Else
-            usrCurrent.strLogin = Trim(LCase(strCmd))
+    
+        ar = Split(strCmd, " ")
+        
+        If UBound(ar) >= 0 Then
+        
+            For iArPos = 0 To UBound(ar)
+            
+                iCmdPos = InStr(1, ar(iArPos), "-adm")
+                
+                If iCmdPos > 0 Then
+                    bAdminMode = True
+                End If
+        
+                iCmdPos = InStr(1, ar(iArPos), "-user:")
+        
+                If iCmdPos > 0 Then
+                    usrCurrent.strLogin = Mid(ar(iArPos), iCmdPos + 6, Len(ar(iArPos)) - 6)
+                End If
+                
+                
+                iCmdPos = InStr(1, ar(iArPos), "-log")
+                
+                If iCmdPos > 0 Then
+                    bLogGlobal = True
+                End If
+                
+            Next iArPos
+        
+        
         End If
+        
+        
     Else
     End If
     
@@ -922,6 +954,7 @@ dbconnect:
     lngRed = &HFF&
     lngRowWinColor = &H80000005
     lngGreen = &HC0FFC0
+    'lngLightGreen = &HC0FFC0
     lngGrey = &HE0E0E0
     lngDarkGrey = &H808080
     lngFiolet = &HFFC0C0
@@ -4586,12 +4619,14 @@ setSpecConfig_ERR:
 End Sub
 
 
+
 '/******************************************************************************
 Public Sub writeToLogFile(strWhat As String, Optional bNew As Boolean = False)
 '/******************************************************************************
 
     On Error GoTo writeToLogFile_ERR
 
+    If Not bLogGlobal Then Exit Sub
 
     Dim fn As Integer
     fn = FreeFile

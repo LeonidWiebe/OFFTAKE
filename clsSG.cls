@@ -1167,6 +1167,10 @@ Public Sub createCmnSpecDrawStruct(sptp As spectype, Optional sCommonMass As Str
     Dim a As Integer
     Dim pnum As Integer
     
+     
+    
+    writeToLogFile "start createCmnSpecDrawStruct(), cSpParts.Count = " & cSpParts.Count, True
+    
     a = 1
     
     Me.spt = sptp
@@ -1174,6 +1178,8 @@ Public Sub createCmnSpecDrawStruct(sptp As spectype, Optional sCommonMass As Str
     Set cSpecUnits = New Collection
     
     Do
+        writeToLogFile "do iter begin"
+        
         Set spunit = New colSU
         
         If blnDrawSpecCap Then spunit.createHead ' кстати можно добавлять разные шапки
@@ -1304,18 +1310,30 @@ Public Sub createCmnSpecDrawStruct(sptp As spectype, Optional sCommonMass As Str
             h = sprow.setOffsetY(h)
         Next sprow
         
+        writeToLogFile "cSpecUnits.Add spunit"
         cSpecUnits.Add spunit
         Set spunit = Nothing
     
+    
+        writeToLogFile "do iter end, qty = " & qty
+    
     Loop Until a > cSpParts.Count Or qty > 0
     
-    If blnSpecLastRows Then Me.setEqualHeight False
+    
+    
+    
+    If blnSpecLastRows Then
+        writeToLogFile "Me.setEqualHeight(False)..."
+        Me.setEqualHeight False
+        writeToLogFile "ok"
+    End If
     
 
 Exit Sub
 
 createStruct_ERR:
     MsgBox "[" & err.Number & "] " & err.Description, vbInformation, "createStruct - Error"
+    'Resume Next
 
 End Sub
 

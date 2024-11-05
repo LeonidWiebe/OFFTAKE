@@ -579,7 +579,7 @@ Begin VB.Form F1
             FrontTabForeColor=   -2147483630
             Caption         =   "Каталоги|Изделия|Арматура|Спецификация|Выборка|Стандарты|Управление|Wise"
             Align           =   0
-            CurrTab         =   4
+            CurrTab         =   2
             FirstTab        =   0
             Style           =   4
             Position        =   0
@@ -605,7 +605,7 @@ Begin VB.Form F1
             AccessibleRole  =   37
             Begin C1SizerLibCtl.C1Elastic C1Elastic5 
                Height          =   9555
-               Left            =   10695
+               Left            =   11295
                TabIndex        =   75
                TabStop         =   0   'False
                Top             =   330
@@ -1632,7 +1632,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic C1Elastic13 
                Height          =   9555
-               Left            =   10395
+               Left            =   10995
                TabIndex        =   56
                TabStop         =   0   'False
                Top             =   330
@@ -2129,7 +2129,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic C1Elastic7 
                Height          =   9555
-               Left            =   10095
+               Left            =   10695
                TabIndex        =   36
                TabStop         =   0   'False
                Top             =   330
@@ -2883,7 +2883,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic elOfftake 
                Height          =   9555
-               Left            =   45
+               Left            =   10395
                TabIndex        =   11
                TabStop         =   0   'False
                Top             =   330
@@ -3208,7 +3208,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic elSpec 
                Height          =   9555
-               Left            =   -10005
+               Left            =   10095
                TabIndex        =   10
                TabStop         =   0   'False
                Top             =   330
@@ -3487,7 +3487,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic elSrtm 
                Height          =   9555
-               Left            =   -10305
+               Left            =   45
                TabIndex        =   9
                TabStop         =   0   'False
                Top             =   330
@@ -3966,17 +3966,30 @@ Begin VB.Form F1
                         ImageIndex      =   26
                         Style           =   5
                         BeginProperty ButtonMenus {66833FEC-8583-11D1-B16A-00C0F0283628} 
-                           NumButtonMenus  =   3
+                           NumButtonMenus  =   7
                            BeginProperty ButtonMenu1 {66833FEE-8583-11D1-B16A-00C0F0283628} 
                               Key             =   "ExcelSave"
                               Text            =   "Сохранить"
                            EndProperty
                            BeginProperty ButtonMenu2 {66833FEE-8583-11D1-B16A-00C0F0283628} 
                               Object.Visible         =   0   'False
+                              Text            =   "0"
                            EndProperty
                            BeginProperty ButtonMenu3 {66833FEE-8583-11D1-B16A-00C0F0283628} 
                               Object.Visible         =   0   'False
                               Text            =   "1"
+                           EndProperty
+                           BeginProperty ButtonMenu4 {66833FEE-8583-11D1-B16A-00C0F0283628} 
+                              Object.Visible         =   0   'False
+                           EndProperty
+                           BeginProperty ButtonMenu5 {66833FEE-8583-11D1-B16A-00C0F0283628} 
+                              Object.Visible         =   0   'False
+                           EndProperty
+                           BeginProperty ButtonMenu6 {66833FEE-8583-11D1-B16A-00C0F0283628} 
+                              Object.Visible         =   0   'False
+                           EndProperty
+                           BeginProperty ButtonMenu7 {66833FEE-8583-11D1-B16A-00C0F0283628} 
+                              Object.Visible         =   0   'False
                            EndProperty
                         EndProperty
                      EndProperty
@@ -3986,7 +3999,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic elEmbParts 
                Height          =   9555
-               Left            =   -10605
+               Left            =   -10005
                TabIndex        =   8
                TabStop         =   0   'False
                Top             =   330
@@ -4746,7 +4759,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic elCats 
                Height          =   9555
-               Left            =   -10905
+               Left            =   -10305
                TabIndex        =   7
                TabStop         =   0   'False
                Top             =   330
@@ -6147,14 +6160,14 @@ Begin VB.Form F1
             AutoSize        =   2
             Object.Width           =   1773
             MinWidth        =   1764
-            TextSave        =   "22.10.2024"
+            TextSave        =   "30.10.2024"
          EndProperty
          BeginProperty Panel3 {8E3867AB-8586-11D1-B16A-00C0F0283628} 
             Style           =   5
             AutoSize        =   2
             Object.Width           =   1244
             MinWidth        =   1235
-            TextSave        =   "16:02"
+            TextSave        =   "15:24"
          EndProperty
          BeginProperty Panel4 {8E3867AB-8586-11D1-B16A-00C0F0283628} 
             AutoSize        =   2
@@ -23233,6 +23246,11 @@ Private Sub tbRein_ButtonClick(ByVal Button As MSComctlLib.Button)
             Case "Excel"
                 Dim strFile As String
                 strFile = openExcelDoc(True)
+                
+                If FileExists(strFile) Then
+                    If MsgBox("Файл  существует, перезаписать?", vbYesNo, "") = vbNo Then Exit Sub
+                End If
+                
                 If Len(strFile) > 0 Then fgCatParts.SaveGrid strFile, flexFileExcel
                 
                 
@@ -23692,21 +23710,49 @@ Private Sub tbRein_ButtonMenuClick(ByVal ButtonMenu As MSComctlLib.ButtonMenu)
         Case "ExcelSave"
             
             strFile = openExcelDoc(True)
+            
+            If FileExists(strFile) Then
+                If MsgBox("Файл  существует, перезаписать?", vbYesNo, "") = vbNo Then Exit Sub
+            End If
+            
             If Len(strFile) > 0 Then fgCatParts.SaveGrid strFile, flexFileExcel
             
         Case ""
             
-            strFile = openExcelDoc(False)
+            Dim bReloadGrid As Boolean
             
-            If Len(strFile) > 0 Then
-
-                fgExcel.loadGrid strFile, flexFileExcel
+            If left(ButtonMenu.Tag, 3) = "exp" Then
+                strFile = openExcelDoc(True)
                 
-                loadReinPositions fgExcel, ButtonMenu.Tag
+                If Len(strFile) > 0 Then
                 
-                loadCatalog lngCurCatID
-            
+                    If FileExists(strFile) Then
+                        If MsgBox("Файл  существует, перезаписать?", vbYesNo, "") = vbNo Then Exit Sub
+                    End If
+                
+                    exportPrepRein ButtonMenu.Tag
+                    
+                    fgExcel.SaveGrid strFile, flexFileExcel
+                
+                End If
+                
+            Else
+                strFile = openExcelDoc(False)
+                
+                If FileExists(strFile) Then
+    
+                    fgExcel.loadGrid strFile, flexFileExcel
+                    
+                    loadReinPositions fgExcel, ButtonMenu.Tag, fgCatParts, bReloadGrid
+                    
+                    If bReloadGrid Then loadCatalog lngCurCatID
+                
+                End If
+                
             End If
+            
+            
+
             
         Case "spec"
             
@@ -25147,7 +25193,7 @@ Public Sub calcReinGridSum()
         Dim d As String
         
         If fgCatParts.Rows > 1 Then
-        d = Format(fgCatParts.Aggregate(flexSTSum, 1, fgCatParts.ColIndex("cmass"), fgCatParts.Rows - 2, fgCatParts.ColIndex("cmass")), sFmt1)
+            d = Format(fgCatParts.Aggregate(flexSTSum, 1, fgCatParts.ColIndex("cmass"), fgCatParts.Rows - 2, fgCatParts.ColIndex("cmass")), sFmt1)
         End If
 
         Me.SB.Panels("reinmass").text = "Арматура: " & Format(d, sFmt1) & "  "
@@ -36533,7 +36579,119 @@ Public Sub loadTechData(nd As Node, ByRef cnpw As ADODB.Connection, Optional bBl
 End Sub
 
 
-Public Sub loadReinPositions(ByRef FG As VSFlexGrid, strImpKey As String)
+'/******************************************************************************
+Public Sub exportPrepRein(strImpKey As String)
+'/******************************************************************************
+
+    On Error GoTo exportPrepRein_ERR
+    
+    'fgCatParts -> fgExcel
+    
+'        .ColKey(0) = "num"
+'        .ColKey(1) = "posdef"
+'        .ColKey(2) = "std"
+'        .ColKey(3) = "srtm"
+'        .ColKey(4) = "mat"
+'        .ColKey(5) = "length"
+'        .ColKey(6) = "qty"
+'        .ColKey(7) = "sketch"
+'        .ColKey(8) = "masslength"
+'        .ColKey(9) = "umass"
+'        .ColKey(10) = "cmass"
+'        .ColKey(11) = "objID"
+'        .ColKey(12) = "ID"
+'        .ColKey(13) = "stdID"
+'        .ColKey(14) = "posdefID"
+'        .ColKey(15) = "stdpdID"
+'        .ColKey(16) = "srtmID"
+'        .ColKey(17) = "matID"
+'        .ColKey(18) = "mcID"
+'        .ColKey(19) = "partID"
+'        .ColKey(20) = "numDigits"
+'        .ColKey(21) = "roundshift"
+'        .ColKey(22) = "roundsaved"
+
+'
+'                    <Column index="0" key="posnum" required="true"/>
+'                    <Column index="1" key="quantity" required="false"/>
+'                    <Column index="2" key="length" required="false"/>
+'                    <Column index="3" key="srtmID" required="true"/>
+'                    <Column index="4" key="matID" required="false"/>
+'                    <Column index="5" key="sketch" required="false"/>
+'                    <Column index="6" key="posnote" required="false"/>
+
+    Dim im As clsObj
+    Set im = getColItem(imps, strImpKey)
+
+    If im Is Nothing Then
+        MsgBox "Что-то пошло не так", vbOKOnly, ""
+        Exit Sub
+    End If
+    
+    fgExcel.Clear
+    fgExcel.Rows = fgCatParts.Rows
+    
+
+    Dim i As Long
+    Dim Clmn As clsObj
+    
+    Dim srckey As String
+    
+    For i = 1 To fgCatParts.Rows - 1
+    
+        For Each Clmn In im.kinder
+            If i = 1 Then
+            
+                srckey = Clmn.props("key").propValue
+            
+                fgExcel.TextMatrix(i, Val(Clmn.props("index").propValue)) = srckey
+            
+            Else
+            
+                If Clmn.props("rowdata").propValue Then
+                
+                
+                    fgExcel.TextMatrix(i, Val(Clmn.props("index").propValue)) = fgCatParts.RowData(i - 1)
+                
+                Else
+                    srckey = Clmn.props("srckey").propValue
+                    
+                    Dim v As Variant
+                    
+                    If Clmn.props("dec").propValue Then
+                        If CBool(fgCatParts.TextMatrix(i - 1, fgCatParts.ColIndex(srckey))) Then v = 1 Else v = 0
+                    Else
+                        v = fgCatParts.TextMatrix(i - 1, fgCatParts.ColIndex(srckey))
+                    End If
+                
+                    fgExcel.TextMatrix(i, Val(Clmn.props("index").propValue)) = v
+                End If
+            
+            
+            
+            
+            End If
+        
+        Next Clmn
+    
+    
+        
+        
+        
+        
+    Next i
+
+
+Exit Sub
+
+exportPrepRein_ERR:
+    F1.SB.Panels("status").text = "exportPrepRein" & "() - " & err.Description
+
+End Sub
+
+
+
+Public Sub loadReinPositions(ByRef FGsrc As VSFlexGrid, strImpKey As String, FGdst As VSFlexGrid, ByRef bReloadGrid As Boolean)
 
     On Error GoTo err
 
@@ -36547,8 +36705,10 @@ Public Sub loadReinPositions(ByRef FG As VSFlexGrid, strImpKey As String)
     
     Dim posnum As Long
     Dim srtmID As Long
+    Dim matID As Long
     Dim dLength As Double
 
+    bReloadGrid = False
 
     Dim im As clsObj
     Set im = getColItem(imps, strImpKey)
@@ -36562,15 +36722,22 @@ Public Sub loadReinPositions(ByRef FG As VSFlexGrid, strImpKey As String)
     head_row = start_row - 1
     
     ' индексы столюцов
-    For i = 0 To FG.cols - 1
+    For i = 0 To FGsrc.cols - 1
     
-        Set Clmn = im.getKinder(FG.TextMatrix(head_row, i))
+        Set Clmn = im.getKinder(FGsrc.TextMatrix(head_row, i))
         If Not Clmn Is Nothing Then
             If Clmn.props.existsProperty("index") Then
                 Clmn.props("index").propValue = i
             Else
                 Call Clmn.props.AddProp("index", i)
             End If
+            
+            If Clmn.props.existsProperty("exist") Then
+                Clmn.props("exist").propValue = i
+            Else
+                Call Clmn.props.AddProp("exist", i)
+            End If
+            
         End If
     
     Next i
@@ -36583,7 +36750,8 @@ Public Sub loadReinPositions(ByRef FG As VSFlexGrid, strImpKey As String)
     If bReinCarUpdate = False Then
 
         If colRein2.Count > 1 Then
-            MsgBox "Каталог уже содержит позиции. Перед импортом они должны быть удалены", vbOKOnly, ""
+            MsgBox "Каталог уже содержит позиции. Перед импортом они должны быть удалены" & vbNewLine & _
+                    "Для изменения существующих позиций используйте пожалуйста команду обновления", vbOKOnly, ""
             Exit Sub
         End If
     
@@ -36594,16 +36762,16 @@ Public Sub loadReinPositions(ByRef FG As VSFlexGrid, strImpKey As String)
         
        
         
-        For i = start_row To FG.Rows - 1
+        For i = start_row To FGsrc.Rows - 1
         
             posnum = 0
             srtmID = 0
         
             Set Clmn = im.getKinder("posnum")
-            If Not Clmn Is Nothing Then posnum = Val(FG.TextMatrix(i, Clmn.props("index").propValue))
+            If Not Clmn Is Nothing Then posnum = Val(FGsrc.TextMatrix(i, Clmn.props("index").propValue))
             
             Set Clmn = im.getKinder("srtmID")
-            If Not Clmn Is Nothing Then srtmID = Val(FG.TextMatrix(i, Clmn.props("index").propValue))
+            If Not Clmn Is Nothing Then srtmID = Val(FGsrc.TextMatrix(i, Clmn.props("index").propValue))
             
             If posnum > 0 And srtmID > 0 Then
                 cnt = cnt + 1
@@ -36617,16 +36785,16 @@ Public Sub loadReinPositions(ByRef FG As VSFlexGrid, strImpKey As String)
         
         cnt = 0
         
-        For i = start_row To FG.Rows - 1
+        For i = start_row To FGsrc.Rows - 1
         
             posnum = 0
             srtmID = 0
         
             Set Clmn = im.getKinder("posnum")
-            If Not Clmn Is Nothing Then posnum = Val(FG.TextMatrix(i, Clmn.props("index").propValue))
+            If Not Clmn Is Nothing Then posnum = Val(FGsrc.TextMatrix(i, Clmn.props("index").propValue))
             
             Set Clmn = im.getKinder("srtmID")
-            If Not Clmn Is Nothing Then srtmID = Val(FG.TextMatrix(i, Clmn.props("index").propValue))
+            If Not Clmn Is Nothing Then srtmID = Val(FGsrc.TextMatrix(i, Clmn.props("index").propValue))
             
             If posnum > 0 And srtmID > 0 Then
             
@@ -36638,7 +36806,7 @@ Public Sub loadReinPositions(ByRef FG As VSFlexGrid, strImpKey As String)
                 
                 Set Clmn = im.getKinder("length")
                 If Not Clmn Is Nothing Then
-                    dLength = getDbl(FG.TextMatrix(i, Clmn.props("index").propValue))
+                    dLength = getDbl(FGsrc.TextMatrix(i, Clmn.props("index").propValue))
                     If p.pos_props.existsProperty("length") Then
                         Set prop = p.pos_props("length")
                         prop.setValue dLength
@@ -36647,13 +36815,13 @@ Public Sub loadReinPositions(ByRef FG As VSFlexGrid, strImpKey As String)
                 End If
                 
                 Set Clmn = im.getKinder("quantity")
-                If Not Clmn Is Nothing Then p.setQuantity getDbl(FG.TextMatrix(i, Clmn.props("index").propValue)), False
+                If Not Clmn Is Nothing Then p.setQuantity getDbl(FGsrc.TextMatrix(i, Clmn.props("index").propValue)), False
                 
                 Set Clmn = im.getKinder("sketch")
-                If Not Clmn Is Nothing Then p.bSketch = CBool(Val(FG.TextMatrix(i, Clmn.props("index").propValue)))
+                If Not Clmn Is Nothing Then p.bSketch = CBool(Val(FGsrc.TextMatrix(i, Clmn.props("index").propValue)))
                 
                 Set Clmn = im.getKinder("posnote")
-                If Not Clmn Is Nothing Then p.posNote = Trim(FG.TextMatrix(i, Clmn.props("index").propValue))
+                If Not Clmn Is Nothing Then p.posNote = Trim(FGsrc.TextMatrix(i, Clmn.props("index").propValue))
                 
                 If im.props.existsProperty("matID") Then
                     p.setMaterial Val(im.props("matID").propValue), False
@@ -36675,20 +36843,22 @@ Public Sub loadReinPositions(ByRef FG As VSFlexGrid, strImpKey As String)
         Next i
         
         PB.Value = 0
+        
+        bReloadGrid = True
     
     Else ' bReinCarUpdate = true
     
         start_row = im.props("startrow").propValue
         
-        For i = start_row To FG.Rows - 1
+        For i = start_row To FGsrc.Rows - 1
         
             posnum = 0
         
             Set Clmn = im.getKinder("posnum")
-            If Not Clmn Is Nothing Then posnum = Val(FG.TextMatrix(i, Clmn.props("index").propValue))
+            If Not Clmn Is Nothing Then posnum = Val(FGsrc.TextMatrix(i, Clmn.props("index").propValue))
             
             'Set Clmn = im.kinder("srtmID")
-            'srtmID = Val(FG.TextMatrix(i, Clmn.props("index").propValue))
+            'srtmID = Val(FGsrc.TextMatrix(i, Clmn.props("index").propValue))
             
             If posnum > 0 Then
                 cnt = cnt + 1
@@ -36702,53 +36872,135 @@ Public Sub loadReinPositions(ByRef FG As VSFlexGrid, strImpKey As String)
         
         cnt = 0
         
-        For i = start_row To FG.Rows - 1
+        Dim arMustUpdate(100) As Boolean
+        Dim ii As Integer
+        
+        For i = start_row To FGsrc.Rows - 1
         
             posnum = 0
         
             Set Clmn = im.getKinder("posnum")
-            If Not Clmn Is Nothing Then posnum = Val(FG.TextMatrix(i, Clmn.props("index").propValue))
+            If Not Clmn Is Nothing Then posnum = Val(FGsrc.TextMatrix(i, Clmn.props("index").propValue))
             
             'Set Clmn = im.kinder("srtmID")
-            'srtmID = Val(FG.TextMatrix(i, Clmn.props("index").propValue))
+            'srtmID = Val(FGsrc.TextMatrix(i, Clmn.props("index").propValue))
             
             If posnum > 0 Then
             
                 If getReinPos(posnum, p) Then
                 
+                    For ii = 0 To UBound(arMustUpdate)
+                        arMustUpdate(ii) = False
+                    Next ii
+                    p.bMustUpdate = False
+                
                     Set Clmn = im.getKinder("srtmID")
                     If Not Clmn Is Nothing Then
-                        srtmID = Val(FG.TextMatrix(i, Clmn.props("index").propValue))
-                        p.setSrtm srtmID, False, True
+                        If Clmn.props.existsProperty("exist") Then
+                            srtmID = Val(FGsrc.TextMatrix(i, Clmn.props("index").propValue))
+                            If srtmID > 0 And globSrtm.exists(srtmID) And srtmID <> p.POS_SRTM.srtmID Then
+                                p.setSrtm srtmID, False, True
+                                arMustUpdate(FGdst.ColIndex("srtm")) = True
+                                p.bMustUpdate = True
+                            End If
+                        End If
                     End If
                 
                     Set Clmn = im.getKinder("length")
                     If Not Clmn Is Nothing Then
-                        dLength = getDbl(FG.TextMatrix(i, Clmn.props("index").propValue))
-                        If p.pos_props.existsProperty("length") Then
-                            Set prop = p.pos_props("length")
-                            prop.setValue dLength
-                            Set prop = Nothing
+                        If Clmn.props.existsProperty("exist") Then
+                            dLength = getDbl(FGsrc.TextMatrix(i, Clmn.props("index").propValue))
+                            If p.pos_props.existsProperty("length") Then
+                                Set prop = p.pos_props("length")
+                                If dLength <> prop.propValue Then
+                                    prop.setValue dLength
+                                    arMustUpdate(FGdst.ColIndex("length")) = True
+                                    p.bMustUpdate = True
+                                End If
+                                Set prop = Nothing
+                            Else
+                                ' add prop?
+                            End If
                         End If
                     End If
                     
                     Set Clmn = im.getKinder("quantity")
-                    If Not Clmn Is Nothing Then p.setQuantity getDbl(FG.TextMatrix(i, Clmn.props("index").propValue)), False
+                    If Not Clmn Is Nothing Then
+                        If Clmn.props.existsProperty("exist") Then
+                            Dim qty As Double
+                            qty = getDbl(FGsrc.TextMatrix(i, Clmn.props("index").propValue))
+                            If qty <> p.posQty Then
+                                p.setQuantity qty, False
+                                arMustUpdate(FGdst.ColIndex("qty")) = True
+                                p.bMustUpdate = True
+                            End If
+                        End If
+                    End If
                     
                     Set Clmn = im.getKinder("sketch")
-                    If Not Clmn Is Nothing Then p.bSketch = CBool(FG.TextMatrix(i, Clmn.props("index").propValue))
+                    If Not Clmn Is Nothing Then
+                        If Clmn.props.existsProperty("exist") Then
+                            Dim bSk As Boolean
+                            bSk = getBool(FGsrc.TextMatrix(i, Clmn.props("index").propValue))
+                            If p.bSketch <> bSk Then
+                                p.bSketch = bSk
+                                arMustUpdate(FGdst.ColIndex("sketch")) = True
+                                p.bMustUpdate = True
+                            End If
+                        End If
+                    End If
+                    
+                    Set Clmn = im.getKinder("matID")
+                    If Not Clmn Is Nothing Then
+                        If Clmn.props.existsProperty("exist") Then
+                            matID = Val(FGsrc.TextMatrix(i, Clmn.props("index").propValue))
+                            If matID > 0 And p.POS_MAT.matID <> matID Then
+                                p.setMaterial matID, False
+                                arMustUpdate(FGdst.ColIndex("mat")) = True
+                                p.bMustUpdate = True
+                            End If
+                        End If
+                    End If
                     
                     'If im.props.existsProperty("matID") Then
                     '    p.setMaterial Val(im.props("matID").propValue), False
                     'End If
                 
                     Set Clmn = im.getKinder("posnote")
-                    If Not Clmn Is Nothing Then p.posNote = Trim(FG.TextMatrix(i, Clmn.props("index").propValue))
+                    If Not Clmn Is Nothing Then
+                        If Clmn.props.existsProperty("exist") Then
+                            Dim strPN As String
+                            strPN = Trim(FGsrc.TextMatrix(i, Clmn.props("index").propValue))
+                            If StrComp(p.posNote, strPN, vbTextCompare) Then
+                                p.posNote = strPN
+                                arMustUpdate(0) = True
+                                p.bMustUpdate = True
+                            End If
+                        End If
+                    End If
                 
                 End If
                 
-                If p.savePos Then
-                    fgCatParts.RowData(posnum) = p.posNote
+                Dim bUpdated As Boolean
+                
+                If p.bMustUpdate Then
+                    If p.savePos Then
+                        
+                        fgCatPartsSetRowData posnum, p, False, False  ' also p.posNote
+                    
+                        For ii = 0 To UBound(arMustUpdate)
+                            If arMustUpdate(ii) Then
+
+                                FGdst.Cell(flexcpBackColor, posnum, ii) = lngGreen
+                                arMustUpdate(ii) = False
+                                
+                            End If
+                        Next ii
+                        
+                    End If
+                    
+                    p.bMustUpdate = False
+                    
                 End If
                 
                 Set p = Nothing
@@ -36766,7 +37018,9 @@ Public Sub loadReinPositions(ByRef FG As VSFlexGrid, strImpKey As String)
         PB.Value = 0
     
     
-    
+        updateComMassRows False  ' no base update, see savePos
+        
+        calcReinGridSum
     
     
     End If
