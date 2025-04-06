@@ -1,94 +1,328 @@
-start createCmnSpecDrawStruct(), cSpParts.Count = 2014
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 0
-do iter begin
-cSpecUnits.Add spunit
-do iter end, qty = 1
+specPart2()
+FindWindow
+UpdateGraphicGroupNumber
+getMSWindowH
+part.setIDv2
+loadSpecPart2
+\\pwm.sp.spbaep.ru\soft\Offtake\testing\drawings.dgn
+spec_embpart_ed_eng
+OpenDesignFileForProgram
+dfsource.Models(strModel)
+GetInput
+loadGroupElements() head
+GetNamedGroup
+GetElements 1
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = point left top
+ee.Current
+ele.Level.Name = point left bottom
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = 12
+ee.Current
+ele.Level.Name = 12
+ee.Current
+ele.Level.Name = 12
+ee.Current
+ele.Level.Name = 12
+ee.Current
+ele.Level.Name = 12
+ee.Current
+ele.Level.Name = 12
+ee.Current
+ele.Level.Name = 12
+ee.Current
+ele.Level.Name = 12
+ee.Current
+ele.Level.Name = 12
+ee.Current
+ele.Level.Name = 12
+GetElements 2
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+loadGroupElements() parts
+GetNamedGroup
+GetElements 1
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = point left top
+ee.Current
+ele.Level.Name = point left bottom
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+GetElements 2
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+loadGroupElements() parts_pos_8
+GetNamedGroup
+GetElements 1
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = point left top
+ee.Current
+ele.Level.Name = point left bottom
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+GetElements 2
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+loadGroupElements() parts_pos_8
+GetNamedGroup
+GetElements 1
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = point left top
+ee.Current
+ele.Level.Name = point left bottom
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+GetElements 2
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+loadGroupElements() mat
+GetNamedGroup
+GetElements 1
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = point left top
+ee.Current
+ele.Level.Name = point left bottom
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+GetElements 2
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+loadGroupElements() mat_pos_n
+GetNamedGroup
+GetElements 1
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = point left top
+ee.Current
+ele.Level.Name = point left bottom
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = Default
+GetElements 2
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+loadGroupElements() bottom
+GetNamedGroup
+GetElements 1
+ee.Current
+ele.Level.Name = Default
+ee.Current
+ele.Level.Name = point left top
+ee.Current
+ele.Level.Name = point left bottom
+GetElements 2
+ee.Current.Clone
+ee.Current.Clone
+ee.Current.Clone
+SetForegroundWindow

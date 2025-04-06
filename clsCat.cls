@@ -57,19 +57,17 @@ Public pw_ds_fld_ID As Long
 
 Public userspecID As Long
 
-'/******************************************************************************
-Private Function getVersFromName(sCatName As String) As String
-'/******************************************************************************
+Public Function getVersNumFromName(sCatName As String) As Integer
 
-    On Error GoTo getVersFromName_ERR
+On Error GoTo err
 
     Dim iVers As Integer
     Dim sVers As String
     
     iVers = 0
     sVers = ""
-
-    getVersFromName = ""
+    
+    getVersNumFromName = 0
 
     Dim ar() As String
     
@@ -77,7 +75,6 @@ Private Function getVersFromName(sCatName As String) As String
 
     If UBound(ar) = 1 Then
         sVers = UCase(ar(1))
-    
     Else
         ar = Split(sCatName, "=")
     
@@ -86,8 +83,6 @@ Private Function getVersFromName(sCatName As String) As String
         End If
     
     End If
-    
-    
     
     If Len(Trim(sVers)) = 0 Then Exit Function
     
@@ -99,6 +94,30 @@ Private Function getVersFromName(sCatName As String) As String
         iVers = Val(sVers)
     Loop
     
+    
+    getVersNumFromName = iVers
+    
+    
+    Exit Function
+err:
+    getVersNumFromName = 0
+
+End Function
+
+
+
+'/******************************************************************************
+Public Function getVersFromName(sCatName As String) As String
+'/******************************************************************************
+
+    On Error GoTo getVersFromName_ERR
+
+    Dim iVers As Integer
+
+    getVersFromName = ""
+
+    iVers = getVersNumFromName(sCatName)
+
     If iVers = 0 Then Exit Function
     
     getVersFromName = "C" & Format(iVers, "00")

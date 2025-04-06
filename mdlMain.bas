@@ -561,11 +561,11 @@ Public arBases() As String
 'ez 2017-07-07 ÒÒ˚ÎÍ‡ Ì‡ Ù‡ÈÎ ÍÓÌÙË„Û‡ˆËË (‰Îˇ ÙÓÏËÓ‚‡ÌËˇ Ú‡·ÎËˆ SymView)
 Private prConfig As clsConfig
 
-Public Function getPwBldSub(i As pwbldsub)
-    If i = pwbldsubNon Then getPwBldSub = ""
-    If i = pwbldsubCat Then getPwBldSub = "pwcat"
-    If i = pwbldsubSet Then getPwBldSub = "pwset"
-    If i = pwbldsubMod Then getPwBldSub = "pwmod"
+Public Function getPwBldSub(I As pwbldsub)
+    If I = pwbldsubNon Then getPwBldSub = ""
+    If I = pwbldsubCat Then getPwBldSub = "pwcat"
+    If I = pwbldsubSet Then getPwBldSub = "pwset"
+    If I = pwbldsubMod Then getPwBldSub = "pwmod"
 End Function
 
 
@@ -1067,15 +1067,15 @@ dbconnect:
     
     '===================================================================
     
-    Dim i As Integer
+    Dim I As Integer
     Dim pws As clsDBCon
-    For i = 1 To pwsets.Count
-        Set pws = pwsets(i)
+    For I = 1 To pwsets.Count
+        Set pws = pwsets(I)
         pws.constring = "Provider=" & conn.strProvider & ".1;Persist Security Info=False;Timeout=5;"
         pws.constring = pws.constring & "User ID=" & pws.login & ";"
         pws.constring = pws.constring & "Initial Catalog=" & pws.database & ";"
         pws.constring = pws.constring & "Data Source=" & pws.server & ";"
-    Next i
+    Next I
     
     pwset.connected = connectPW(conn.strProvider, False)
                 
@@ -1091,7 +1091,7 @@ dbconnect:
                 
                 
     
-    Unload frmSps
+    If Not frmSps Is Nothing Then Unload frmSps
     Set frmSps = Nothing
     F1.Show
     F1.Refresh
@@ -1188,7 +1188,7 @@ Public Function getServerSettings() As Boolean
 
     On Error GoTo getServerSettings_ERR ' ec
     
-    Dim i As Integer
+    Dim I As Integer
     Dim strFileName As String
     Dim fn As Integer
     Dim ar() As String
@@ -1451,15 +1451,15 @@ Public Function getServerSettings() As Boolean
     
     ar = Split(str(1), ",", , vbTextCompare)
     ReDim arServers(UBound(ar))
-    For i = 0 To UBound(ar)
-        arServers(i) = ar(i)
-    Next i
+    For I = 0 To UBound(ar)
+        arServers(I) = ar(I)
+    Next I
     
     ar = Split(str(2), ",", , vbTextCompare)
     ReDim arBases(UBound(ar))
-    For i = 0 To UBound(ar)
-        arBases(i) = ar(i)
-    Next i
+    For I = 0 To UBound(ar)
+        arBases(I) = ar(I)
+    Next I
     
     sRememberedDB = GetSetting("Offtake2", "Source", "DB_rem", "")
     sRememberedSRV = GetSetting("Offtake2", "Source", "SRV_rem", "")
@@ -1662,11 +1662,11 @@ Sub writeUnicodeTextFile(ByRef path As String, ByRef Value As String)
     Buffer2(0) = &HFF
     Buffer2(1) = &HFE
 
-    Dim i As Integer
+    Dim I As Integer
 
-    For i = 0 To UBound(buffer)
-        Buffer2(i + 2) = buffer(i)
-    Next i
+    For I = 0 To UBound(buffer)
+        Buffer2(I + 2) = buffer(I)
+    Next I
     
     ' clear
     FileNum = FreeFile
@@ -2047,13 +2047,13 @@ Public Function loadMassCalcs() As Boolean
     
     
     
-    Dim i As Integer
+    Dim I As Integer
     
     
-    For i = 1 To globMassCalcs.Count
-        Set mc = globMassCalcs(i)
+    For I = 1 To globMassCalcs.Count
+        Set mc = globMassCalcs(I)
         mc.loadChildren
-    Next i
+    Next I
     
     RS.Close
     Set RS = Nothing
@@ -2096,15 +2096,15 @@ Public Function loadMeasureUnits() As Boolean
     Loop Until RS.EOF
     
     
-    Dim i As Integer
+    Dim I As Integer
     
     
-    For i = 1 To globMUnits.Count
+    For I = 1 To globMUnits.Count
         
-        Set mu = globMUnits(i)
+        Set mu = globMUnits(I)
         mu.loadChildren
         
-    Next i
+    Next I
     
     RS.Close
     Set RS = Nothing
@@ -2207,7 +2207,7 @@ Public Function loadSortament() As Boolean
     
     On Error GoTo loadSortament_ERR
     
-    Dim i As Integer
+    Dim I As Integer
     Dim s As String
     
     Set globSrtm = New colSrtm
@@ -3391,7 +3391,7 @@ End Function
 
 
 '/******************************************************************************
-Public Function correctPartName(strPartName As String) As String
+Public Function correctPartName(strPartName As String, Optional bFull As Boolean = False, Optional cm As VbCompareMethod = vbBinaryCompare) As String
 '/******************************************************************************
 
     On Error GoTo correctPartName_ERR
@@ -3402,14 +3402,19 @@ Public Function correctPartName(strPartName As String) As String
 
     Dim alpE As String
     Dim alpR As String
-    Dim i As Integer
+    Dim I As Integer
     
-    alpE = "ABCEHKMOPTXaceopx" ' english
-    alpR = "¿¬—≈Õ ÃŒ–“’‡ÒÂÓı" ' russian
+    If bFull Then
+        alpE = "ABVGDEEGZIYKLMNOPRSTUFHCTSS'Y'EUA" ' english
+        alpR = "¿¡¬√ƒ≈®∆«»… ÀÃÕŒœ–—“”‘’÷◊ÿŸ‹€⁄›ﬁﬂ" ' russian
+    Else
+        alpE = "ABCEHKMOPTXaceopx" ' english
+        alpR = "¿¬—≈Õ ÃŒ–“’‡ÒÂÓı" ' russian
+    End If
     
-    For i = 1 To Len(alpE)
-        strName = Replace(strName, Mid(alpR, i, 1), Mid(alpE, i, 1), , , vbBinaryCompare)
-    Next i
+    For I = 1 To Len(alpE)
+        strName = Replace(strName, Mid(alpR, I, 1), Mid(alpE, I, 1), , , cm)
+    Next I
     
     strName = Replace(strName, Chr(10), "")
     strName = Replace(strName, Chr(13), "")
@@ -3712,6 +3717,8 @@ Public Function getTrans(strKey As String, Optional strDelim As String = vbNewLi
         getTrans = strKey & strDelim & trans(strKey)
     ElseIf iTransType = 2 Then
         getTrans = trans(strKey)
+    ElseIf iTransType = 3 Then
+        getTrans = correctPartName(strKey, True, vbTextCompare)
     Else
         getTrans = strDelim & trans(strKey)
     End If
@@ -3726,6 +3733,8 @@ getTrans_ERR:
     ElseIf iTransType = 1 Then
         getTrans = strKey
     ElseIf iTransType = 2 Then
+        getTrans = strKey
+    ElseIf iTransType = 3 Then
         getTrans = strKey
     Else
         getTrans = strDelim & strKey
@@ -4385,14 +4394,14 @@ Public Function sortCollection(ByVal c As Collection) As Collection
     
     ReDim Index(0 To n - 1) As Long                    ' allocate index array
     
-    Dim i As Long, m As Long
+    Dim I As Long, m As Long
     
-    For i = 0 To n - 1
-        Index(i) = i + 1
+    For I = 0 To n - 1
+        Index(I) = I + 1
     Next         ' fill index array
     
-    For i = n \ 2 - 1 To 0 Step -1                     ' generate ordered heap
-        Heapify c, Index, i, n
+    For I = n \ 2 - 1 To 0 Step -1                     ' generate ordered heap
+        Heapify c, Index, I, n
     Next
     
     For m = n To 2 Step -1                             ' sort the index array
@@ -4402,14 +4411,14 @@ Public Function sortCollection(ByVal c As Collection) As Collection
     
     Dim c2 As New Collection
     
-    For i = 0 To n - 1
+    For I = 0 To n - 1
     
 '        If typeName(c.Item(Index(i)).KEY) = "String" Then
 '            c2.Add c.Item(Index(i)), c.Item(Index(i)).KEY
 ''        ElseIf typeName(c.Item(Index(i)).KEY) = "Integer" Or typeName(c.Item(Index(i)).KEY) = "Long" Or typeName(c.Item(Index(i)).KEY) = "Double" Then
 ''            c2.Add c.Item(Index(i)), CStr(c.Item(Index(i)).KEY)
 '        Else
-            c2.Add c.Item(Index(i)), CStr(c.Item(Index(i)).KEY)
+            c2.Add c.Item(Index(I)), CStr(c.Item(Index(I)).KEY)
 '        End If
     
         'c2.Add c.Item(Index(i)), c.Item(Index(i)).KEY
@@ -4426,32 +4435,32 @@ Private Sub Heapify(ByVal c As Collection, Index() As Long, ByVal i1 As Long, By
     Dim nDiv2 As Long
     nDiv2 = n \ 2
     
-    Dim i As Long: i = i1
+    Dim I As Long: I = i1
     
-    Do While i < nDiv2
+    Do While I < nDiv2
         
-        Dim k As Long: k = 2 * i + 1
+        Dim k As Long: k = 2 * I + 1
         
         If k + 1 < n Then
             If c.Item(Index(k)).KEY < c.Item(Index(k + 1)).KEY Then k = k + 1
         End If
         
-        If c.Item(Index(i)).KEY >= c.Item(Index(k)).KEY Then Exit Do
+        If c.Item(Index(I)).KEY >= c.Item(Index(k)).KEY Then Exit Do
         
-        Exchange Index, i, k
+        Exchange Index, I, k
         
-        i = k
+        I = k
         
     Loop
     
 End Sub
 
-Private Sub Exchange(Index() As Long, ByVal i As Long, ByVal j As Long)
+Private Sub Exchange(Index() As Long, ByVal I As Long, ByVal j As Long)
     
     Dim temp As Long
-    temp = Index(i)
+    temp = Index(I)
     
-    Index(i) = Index(j)
+    Index(I) = Index(j)
     
     Index(j) = temp
     
@@ -4588,11 +4597,11 @@ Public Sub setSpecConfig(scID As Long)
         
         dSpecWidth = 0#
         
-        Dim i As Integer
-        For i = 0 To UBound(ar)
-            arSpecCol(i + 1) = getDbl(ar(i)) * dSpecCmnScale
-            dSpecWidth = dSpecWidth + arSpecCol(i + 1)
-        Next i
+        Dim I As Integer
+        For I = 0 To UBound(ar)
+            arSpecCol(I + 1) = getDbl(ar(I)) * dSpecCmnScale
+            dSpecWidth = dSpecWidth + arSpecCol(I + 1)
+        Next I
         
         curSpecCfg.iColCnt = UBound(ar) + 1
         
@@ -4713,15 +4722,15 @@ Public Sub getWiseTreeSettings()
     
     ar = Split(str, "|")
     
-    Dim i As Long
+    Dim I As Long
     
-    For i = 0 To UBound(ar)
+    For I = 0 To UBound(ar)
     
-        ar2 = Split(ar(i), ":")
+        ar2 = Split(ar(I), ":")
         
         colWiseTreeSet.Add CBool(ar2(1)), ar2(0)
     
-    Next i
+    Next I
 
 
 
@@ -4751,15 +4760,15 @@ Public Sub getCatTreeSettings()
     
     ar = Split(str, "|")
     
-    Dim i As Long
+    Dim I As Long
     
-    For i = 0 To UBound(ar)
+    For I = 0 To UBound(ar)
     
-        ar2 = Split(ar(i), ":")
+        ar2 = Split(ar(I), ":")
         
         colCatTreeSet.Add CBool(ar2(1)), ar2(0)
     
-    Next i
+    Next I
     
 
 Exit Sub
@@ -4861,7 +4870,7 @@ Public Function stringSplit(str As String) As String
     
     On Error GoTo stringSplit_ERR
     
-    Dim i As Integer
+    Dim I As Integer
     
     Dim sss As String
     
@@ -4869,9 +4878,9 @@ Public Function stringSplit(str As String) As String
     ar = Split(str, " ")
     If UBound(ar) > 0 Then
         sss = ar(0) & vbNewLine
-        For i = 1 To UBound(ar)
-            sss = sss & ar(i) & " "
-        Next i
+        For I = 1 To UBound(ar)
+            sss = sss & ar(I) & " "
+        Next I
     Else
         sss = str
     End If
@@ -5182,17 +5191,17 @@ On Error GoTo m1
         
         strPath = arExcelFiles(0)
         
-        Dim i As Integer
-        For i = 0 To UBound(arExcelFiles)
-            If Len(Trim(arExcelFiles(i))) = 0 Then
+        Dim I As Integer
+        For I = 0 To UBound(arExcelFiles)
+            If Len(Trim(arExcelFiles(I))) = 0 Then
                 
-                ReDim Preserve arExcelFiles(i - 1)
+                ReDim Preserve arExcelFiles(I - 1)
                 Exit For
             
             
             End If
         
-        Next i
+        Next I
         
         If UBound(arExcelFiles) = 0 Then ' one file selected
             getTaskFiles = -1
@@ -5201,7 +5210,7 @@ On Error GoTo m1
             SaveSetting "Offtake2", "Size", "BetonReport", _
                         left(arExcelFiles(0), Len(arExcelFiles(0)) - 1 - Len(artmp(UBound(artmp))))
         Else
-            getTaskFiles = i - 1
+            getTaskFiles = I - 1
             SaveSetting "Offtake2", "Size", "BetonReport", strPath
         End If
         
@@ -5306,7 +5315,7 @@ Public Function rebuildString(str As String, ByRef arstr() As String, Optional i
     On Error GoTo err
     
     Dim ar() As String
-    Dim i As Integer
+    Dim I As Integer
     ReDim arstr(0)
     
     ar = Split(str, " ")
@@ -5318,12 +5327,12 @@ Public Function rebuildString(str As String, ByRef arstr() As String, Optional i
     Dim iInd As Integer
     Dim strCop As String
     
-    For i = 0 To UBound(ar)
+    For I = 0 To UBound(ar)
     
         If iCop = 0 Then
-            iCop = Len(ar(i)) ' probel
+            iCop = Len(ar(I)) ' probel
         Else
-            iCop = iCop + 1 + Len(ar(i))
+            iCop = iCop + 1 + Len(ar(I))
         End If
         
         If iCop > iMaxLen Then
@@ -5336,12 +5345,12 @@ Public Function rebuildString(str As String, ByRef arstr() As String, Optional i
         End If
         
         If Len(strCop) = 0 Then
-            strCop = ar(i)
+            strCop = ar(I)
         Else
-            strCop = strCop & " " & ar(i)
+            strCop = strCop & " " & ar(I)
         End If
     
-    Next i
+    Next I
     
     
     If iCop > 0 Then

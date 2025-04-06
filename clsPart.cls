@@ -919,7 +919,10 @@ Public Function setIDv2(ID As Long, bLoadPositions As Boolean, bLoadProperties A
     
 '    typeName = parttypes(typeID).ptName
     
-    partDescr = RS.fields("partDescr").Value & ""
+    'Dim ct As clsCat
+    'Set ct = cCats(CStr(catID))
+    If cCats(CStr(catID)).dsDrawID = 0 Then partDescr = RS.fields("partDescr").Value & ""
+    
     partVers = RS.fields("partVersion").Value & ""
     partSheet = RS.fields("partSheet").Value & ""
     partSortNumber = RS.fields("partSortNumber").Value & ""
@@ -1149,7 +1152,9 @@ Public Sub updatePartGrids(bReloadsProps As Boolean)
         FG.AddItem "Обозначение" & vbTab & Me.PART_DESCR & vbTab & 0
         FG.Cell(flexcpFontBold, FG.Rows - 1, 0) = True
         If Me.bDsNum Then
-            If bFormGridsIcons Then FG.Cell(flexcpPicture, FG.Rows - 1, 1) = F1.ImageList2.ListImages("catalog").ExtractIcon
+            'If bFormGridsIcons Then
+                FG.Cell(flexcpPicture, FG.Rows - 1, 1) = F1.ImageList2.ListImages("catalog").ExtractIcon
+            'End If
             FG.Cell(flexcpPictureAlignment, FG.Rows - 1, 1) = flexPicAlignRightCenter
         End If
         
@@ -2131,7 +2136,12 @@ Public Property Get PART_DESCR() As String
 
     On Error GoTo PART_DESCR_ERR
     
-    If Len(partDescr) > 0 Or PART_CAT.bUnif Then
+    Dim ct As clsCat
+    Set ct = cCats(catID)
+    
+    'if ct.dsDrawID
+    
+    If (Len(partDescr) > 0 Or PART_CAT.bUnif) And ct.dsDrawID = 0 Then
         PART_DESCR = partDescr
         bDsNum = False
     Else

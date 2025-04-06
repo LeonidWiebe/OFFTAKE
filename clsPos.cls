@@ -1674,338 +1674,6 @@ getPosPropertyFromRS_ERR:
 End Function
 
 
-
-'/******************************************************************************
-Public Function import(ByRef RS As ADODB.Recordset) As Boolean
-'/******************************************************************************
-    
-    Dim posdefID As Long
-    Dim posdefName As String
-    Dim prop As clsProp
-    
-    On Error GoTo import_ERR
-    
-    
-    Dim dval As Double
-    
-    import = False
-    
-    posIDold = RS.fields("Счетчик").Value ' присвоение для того чтобы был уникальный ключ в коллекции
-    
-    If Not IsNull(RS.fields("Номер позиции").Value) Then
-        posNumber = CDbl(RS.fields("Номер позиции").Value)
-    Else
-        posNumber = 0#
-    End If
-        
-    
-    ' характеристика позиции
-    '================
-    posdefName = RS.fields("Характеристика позиции").Value & "" ' предварительное присвоение
-    
-    
-    ' узнаем, есть ли такая хар-ка среди синонимов
-    posdefID = selectLongFromBase(cn_srtm, "view_posdef_synonims", "posdefID", "posdefSyn", posdefName)
-    
-    
-    If posdefID > 0 Then ' есть, возвращаем настоящее именование
-        posdefName = selectStringFromBase(cn_srtm, "view_posdef_synonims", "posdefName", "posdefID", posdefID)
-    Else
-        ' среди синонимов нет, берем ID по именованию хар-ки
-        posdefID = selectLongFromBase(cn_srtm, "posdef", "posdefID", "posdefName", posdefName)
-    End If
-    
-    
-    
-    If posdefID = 0 Then ' вообще не нашел такой хар-ки
-        ' ERROR!!!
-        FLog.addLog "pos", posIDold, "не определить posdef", True, True
-        Exit Function
-    End If
-    
-    Me.setPosdefID posdefID, , True ' определяем свойства posdef
-    '================
-    
-    Dim srmp As String
-    srmp = RS.fields("Способ расчета массы позиции").Value & ""
-    If srmp = "кольцо" Then
-        Me.POS_MCALC = 8
-    End If
-    
-    
-    ' стандарт
-    ' ====================================================
-    Dim stdFullNumber As String
-    Dim ar() As String
-    
-    stdFullNumber = RS.fields("ГОСТ на профиль позиции").Value & ""
-    
-    stdFullNumber = Replace(stdFullNumber, "ГОСТ 103-76", "ГОСТ 103-2006")
-    
-    If Len(stdFullNumber) = 0 And posdefName = "Электроды" Then ' электроды
-        stdFullNumber = RS.fields("Материал позиции").Value & ""
-    End If
-    
-    If Len(stdFullNumber) > 0 Then
-        If InStr(1, stdFullNumber, "ОСТ") > 0 Then
-            ar = Split(stdFullNumber, " ")
-            If UBound(ar) = 1 Then
-                Dim std As New clsStd
-                If std.setByNumber(ar(0), ar(1)) Then
-                    Me.setStandard std.stdID
-                Else
-                    FLog.addLog "pos", posIDold, "не определить стандарт " & stdFullNumber, True, True
-                    Exit Function
-                End If
-            Else
-                FLog.addLog "pos", posIDold, "не определить имя стандарта " & stdFullNumber, True, True
-                Exit Function
-            End If
-        ElseIf left(stdFullNumber, 2) = "ТУ" Then
-            ar = Split(stdFullNumber, " ")
-            If UBound(ar) = 1 Then
-                Set std = New clsStd
-                If std.setByNumber(ar(0), ar(1)) Then
-                Else
-                    FLog.addLog "pos", posIDold, "не определить стандарт " & stdFullNumber, True, True
-                    Exit Function
-                End If
-            Else
-                Set std = New clsStd
-                If std.setByNumber("ТУ", right(stdFullNumber, Len(stdFullNumber) - 3)) Then
-                Else
-                    FLog.addLog "pos", posIDold, "не определить имя стандарта " & stdFullNumber, True, True
-                    Exit Function
-                End If
-            
-            End If
-        Else
-            FLog.addLog "pos", posIDold, "стандарт не является ГОСТом или ОСТом - " & stdFullNumber, True, True
-            Exit Function
-        End If
-    Else
-        FLog.addLog "pos", posIDold, "имя стандарта не определено", True, True
-        Exit Function
-    End If
-    
-    
-    Dim stdposdefID As Long
-    
-    
-    stdposdefID = selectLongFromBase(cn_srtm, "r_standard_posdef", "relID", "stdID", std.stdID, "posdefID", POS_PD.pdID)
-    
-    
-    If stdposdefID = 0 Then
-        FLog.addLog "pos", posIDold, "не найдено отношение " & posdefName & " и стандарта " & stdFullNumber, True, True
-        Exit Function
-    End If
-    
-    Dim stdpd As clsStdPd
-    Set stdpd = globStdPosdefs(CStr(stdposdefID))
-    
-    ' сортамент
-    '====================================================
-    
-    posPrtName = RS.fields("Наименование позиции").Value & "" ' предварительное присвоение
-    
-    If left(posPrtName, 1) = "d" Then posPrtName = right(posPrtName, Len(posPrtName) - 1)
-    posPrtName = Replace(posPrtName, ",", ".")
-
-    
-    If StrComp(posdefName, "Электроды") = 0 Then
-        srtmID = selectLongFromBase(cn_srtm, "sortament", "srtmID", "srtmName", posPrtName)
-        
-        If srtmID = 0 Then
-            posPrtName = Replace(posPrtName, "-", "")
-            srtmID = selectLongFromBase(cn_srtm, "sortament", "srtmID", "srtmName", posPrtName)
-        End If
-        
-        stdposdefID = selectLongFromBase(cn_srtm, "sortament", "stdposdefID", "srtmID", srtmID)
-        Call std.setStdID(selectLongFromBase(cn_srtm, "r_standard_posdef", "stdID", "posdefID", POS_PD.pdID, "relID", stdposdefID))
-    Else
-        
-        srtmID = selectLongFromBase(cn_srtm, "sortament", "srtmID", "stdposdefID", stdposdefID, "srtmName", posPrtName)
-        
-        If srtmID = 0 Then
-            posPrtName = Replace(posPrtName, "-", "")
-            srtmID = selectLongFromBase(cn_srtm, "sortament", "srtmID", "stdposdefID", stdposdefID, "srtmName", posPrtName)
-        End If
-    End If
-    
-    
-    
-    If srtmID = 0 Then
-        FLog.addLog "pos", posIDold, "не найдена позиция сортамента " & posdefName & " " & posPrtName & " " & stdFullNumber, True, True
-        Exit Function
-    End If
-        
-    
-    
-'    posUMassSrtm = selectDoubleFromBase(cn_srtm, "r_sortament_property", POS_MCALC.mcTable, "srtmID", srtmID)
-    
-    
-'    getSrtmProps ' вместо reloadSrtmProps
-    reloadSrtmProps
-    
-    '================
-    
-    
-  
-    
-    
-    If Not IsNull(RS.fields("Количество позиций").Value) Then
-        posQty = CDbl(RS.fields("Количество позиций").Value)
-    Else
-        posQty = 0
-    End If
-    
-    
-    
-    If Not IsNull(RS.fields("Единичная масса позиции").Value) Then
-        posUMass = CDbl(RS.fields("Единичная масса позиции").Value)
-        bUMCalc = False
-    Else
-        posUMass = 0#
-        bUMCalc = True
-    End If
-    
-    If Not IsNull(RS.fields("Общая масса позиции").Value) Then
-        posCMass = CDbl(RS.fields("Общая масса позиции").Value)
-        bCMCalc = False
-    Else
-        posCMass = 0#
-        bCMCalc = True
-    End If
-    
-'    If Not IsNull(RS.Fields("Обозначение позиции").Value) Then
-'        Set prop = prop.fromExisting("description")
-'        prop.propValue = RS.Fields("Обозначение позиции").Value
-'        pos_props.AddNewProp prop
-'    End If
-    
-    
-'    класс арматуры
-    Dim strArmClass As String
-    If Not IsNull(RS.fields("Класс арматуры позиции").Value) Then
-        strArmClass = RS.fields("Класс арматуры позиции").Value
-        If strArmClass = "A-III" Then
-            strArmClass = "А400 "
-        ElseIf strArmClass = "A-I" Then
-            strArmClass = "A240 "
-        Else
-            strArmClass = ""
-        End If
-    End If
-    
-    ' материал
-    ' =====================================================
-    Dim strNew(2) As String
-    Dim strOld As String
-    Dim bFound As Boolean
-    bFound = False
-    
-    If Not StrComp(posdefName, "Электроды") = 0 Then
-        Dim RSM As New ADODB.Recordset
-        
-        If bUseCursorClient Then RSM.CursorLocation = adUseClient
-        
-        RSM.Open "select * from view_r_posdef_material where posdefID = " & POS_PD.pdID, cn_srtm, adOpenForwardOnly, adLockReadOnly
-        If Not RSM.EOF Then
-            If Not IsNull(RS.fields("Материал позиции").Value) Then
-            
-                strOld = strArmClass & RS.fields("Материал позиции").Value
-                strOld = makeStringRussian(strOld)
-                strOld = Replace(strOld, "Ст3 кп", "Ст3кп")
-                strOld = Replace(strOld, "380-94", "380-2005")
-                strOld = Replace(strOld, "535-88", "535-2005")
-                If strOld = "25Г2С" Then strOld = "A240 25Г2С"
-                
-                RSM.MoveFirst
-                Do
-                
-                    
-                    strNew(0) = RSM.fields("matName").Value
-                    strNew(1) = RSM.fields("stdTypeName").Value
-                    strNew(2) = RSM.fields("stdNumber").Value
-                    
-                    strNew(0) = makeStringRussian(strNew(0))
-                    strNew(1) = makeStringRussian(strNew(1))
-                    strNew(2) = makeStringRussian(strNew(2))
-                    strNew(2) = Replace(strNew(2), "*", "")
-                    
-                    If InStr(strOld, strNew(0)) > 0 And InStr(strOld, strNew(1)) > 0 And InStr(strOld, strNew(2)) > 0 Then
-                        matID = RSM.fields("matID").Value
-                        bFound = True
-                        Exit Do
-                    End If
-                
-                    RSM.MoveNext
-                Loop Until RSM.EOF
-            
-            
-            
-            Else ' материал для позиции не определен
-            
-                FLog.addLog "pos", posIDold, "не определен материал для позиции", True, True
-'                Exit Function
-            
-            End If
-        Else ' в базе нет такого posdefID
-        
-            FLog.addLog "pos", posIDold, "не найден материал " & strOld & " для " & posdefName, True, True
-            Exit Function
-        
-        End If
-        
-'        If bFound Then
-'            matName = RSM.Fields("matName").Value
-''            Set matStd = globStds(CStr(RSM.Fields("stdID").Value))
-'        Else
-'
-'            FLog.addLog "pos", posIDold, "не найден материал " & strOld & " для " & posdefName, True, True
-''            Exit Function
-'
-'            matID = 0
-'            matName = ""
-'        End If
-        
-        RSM.Close
-        Set RSM = Nothing
-    
-    End If
-    
-
-    
-    ' ======= геометрические параметры ================
-    ' =====================================================
-    
-    
-    If Not (RS.fields("Длина позиции").Value = 1000) Then addd RS, "Длина позиции", "length"
-    addd RS, "Сегмент кольца позиции", "segment"
-    addd RS, "Диаметр позиции", "diameter"
-    addd RS, "Радиус позиции", "radiusout"
-    addd RS, "Внешний радиус позиции", "radiusout"
-    addd RS, "Внутренний радиус позиции", "radiusinn"
-    addd RS, "Толщина позиции", "thickness"
-    addd RS, "Ширина позиции", "width"
-    addd RS, "Высота позиции", "height"
-    addd RS, "Шаг позиций", "spacing"
-    
-
-'    Debug.Print Me.posNumber
-    
-    import = True
-    
-    
-    
-    Exit Function
-    
-import_ERR:
-    import = False
-    MsgBox "[" & err.Number & "] " & err.Description, vbCritical, "import - Error"
-    
-End Function
-
 '/******************************************************************************
 Public Function getEmptyPropsQty() As Integer
 '/******************************************************************************
@@ -3222,45 +2890,99 @@ End Property
 
 
 '/******************************************************************************
-Public Function getPosLength(bWithLap As Boolean, ByRef bGotLap As Boolean, Optional bSI As Boolean = False) As Double
+Public Function getPosLengthSimple(Optional bSI As Boolean = False) As Double
 '/******************************************************************************
 
-    On Error GoTo getPosLengthWithLap_ERR
-    
-    Dim prop As clsProp
-    Dim koef As Double
-    
-    bGotLap = False
+    On Error GoTo getPosLengthSimple_ERR
+
 
     If Not pos_props.existsProperty("length") Then
         If bSI Then
-            getPosLength = pos_props.getPropSiValue("length")
+            getPosLengthSimple = pos_props.getPropSiValue("length")
         Else
-            getPosLength = 0#
+            getPosLengthSimple = 0#
         End If
         Exit Function
     End If
     
+    
+    Dim prop As clsProp
     Set prop = pos_props("length")
     
-    If prop.propValue = 0 Then
+    If Val(prop.propValue) = 0 Then
         If bSI Then
-            getPosLength = pos_props.getPropSiValue("length")
+            getPosLengthSimple = pos_props.getPropSiValue("length")
         Else
-            getPosLength = 0#
+            getPosLengthSimple = 0#
         End If
         Exit Function
     End If
-    
+
+    Dim koef As Double
+
+
     If bSI Then
         koef = pos_props.getPropSiValue("length") / prop.propValue
     Else
         koef = 1#
     End If
+
+
+    getPosLengthSimple = Val(prop.propValue) * koef
+
+
+Exit Function
+
+getPosLengthSimple_ERR:
+    getPosLengthSimple = 0#
+
+End Function
+
+
+
+'/******************************************************************************
+Public Function getPosLength(bWithLap As Boolean, ByRef bGotLap As Boolean, Optional bSI As Boolean = False) As Double
+'/******************************************************************************
+
+    On Error GoTo getPosLengthWithLap_ERR
+    
+    'Dim prop As clsProp
+    'Dim koef As Double
+    
+    'bGotLap = False
+    
+    Dim lngth As Double
+    lngth = getPosLengthSimple(bSI)
+
+'    If Not pos_props.existsProperty("length") Then
+'        If bSI Then
+'            getPosLength = pos_props.getPropSiValue("length")
+'        Else
+'            getPosLength = 0#
+'        End If
+'        Exit Function
+'    End If
+
+'    Set prop = pos_props("length")
+
+'    If prop.propValue = 0 Then
+'        If bSI Then
+'            getPosLength = pos_props.getPropSiValue("length")
+'        Else
+'            getPosLength = 0#
+'        End If
+'        Exit Function
+'    End If
+    
+'    If bSI Then
+'        koef = pos_props.getPropSiValue("length") / prop.propValue
+'    Else
+'        koef = 1#
+'    End If
     
     
     If POS_LAP.lapValue = 0 Then
-        getPosLength = prop.propValue * koef
+        getPosLength = lngth
         Exit Function
     End If
     
@@ -3268,11 +2990,11 @@ Public Function getPosLength(bWithLap As Boolean, ByRef bGotLap As Boolean, Opti
     bGotLap = False
     
     If bWithLap Then
-        bGotLap = CBool(prop.propValue > POS_LAP.maxlen)
+        bGotLap = CBool(lngth > POS_LAP.maxlen)
 '        getPosLength = (prop.propValue + Ceil((prop.propValue - POS_LAP.maxlen) / (POS_LAP.maxlen - POS_LAP.lapValue)) * POS_LAP.lapValue) * koef
-        getPosLength = POS_LAP.getLength(prop.propValue) * koef
+        getPosLength = POS_LAP.getLength(lngth) ' * koef
     Else
-        getPosLength = prop.propValue * koef
+        getPosLength = lngth ' * koef
     End If
 
     
@@ -3553,5 +3275,337 @@ Exit Function
 getPosQty_ERR:
     getPosQty = posQty
 
+End Function
+
+'/******************************************************************************
+' OLD USE
+Public Function import(ByRef RS As ADODB.Recordset) As Boolean
+'/******************************************************************************
+    
+    Dim posdefID As Long
+    Dim posdefName As String
+    Dim prop As clsProp
+    
+    On Error GoTo import_ERR
+    
+    
+    Dim dval As Double
+    
+    import = False
+    
+    posIDold = RS.fields("Счетчик").Value ' присвоение для того чтобы был уникальный ключ в коллекции
+    
+    If Not IsNull(RS.fields("Номер позиции").Value) Then
+        posNumber = CDbl(RS.fields("Номер позиции").Value)
+    Else
+        posNumber = 0#
+    End If
+        
+    
+    ' характеристика позиции
+    '================
+    posdefName = RS.fields("Характеристика позиции").Value & "" ' предварительное присвоение
+    
+    
+    ' узнаем, есть ли такая хар-ка среди синонимов
+    posdefID = selectLongFromBase(cn_srtm, "view_posdef_synonims", "posdefID", "posdefSyn", posdefName)
+    
+    
+    If posdefID > 0 Then ' есть, возвращаем настоящее именование
+        posdefName = selectStringFromBase(cn_srtm, "view_posdef_synonims", "posdefName", "posdefID", posdefID)
+    Else
+        ' среди синонимов нет, берем ID по именованию хар-ки
+        posdefID = selectLongFromBase(cn_srtm, "posdef", "posdefID", "posdefName", posdefName)
+    End If
+    
+    
+    
+    If posdefID = 0 Then ' вообще не нашел такой хар-ки
+        ' ERROR!!!
+        FLog.addLog "pos", posIDold, "не определить posdef", True, True
+        Exit Function
+    End If
+    
+    Me.setPosdefID posdefID, , True ' определяем свойства posdef
+    '================
+    
+    Dim srmp As String
+    srmp = RS.fields("Способ расчета массы позиции").Value & ""
+    If srmp = "кольцо" Then
+        Me.POS_MCALC = 8
+    End If
+    
+    
+    ' стандарт
+    ' ====================================================
+    Dim stdFullNumber As String
+    Dim ar() As String
+    
+    stdFullNumber = RS.fields("ГОСТ на профиль позиции").Value & ""
+    
+    stdFullNumber = Replace(stdFullNumber, "ГОСТ 103-76", "ГОСТ 103-2006")
+    
+    If Len(stdFullNumber) = 0 And posdefName = "Электроды" Then ' электроды
+        stdFullNumber = RS.fields("Материал позиции").Value & ""
+    End If
+    
+    If Len(stdFullNumber) > 0 Then
+        If InStr(1, stdFullNumber, "ОСТ") > 0 Then
+            ar = Split(stdFullNumber, " ")
+            If UBound(ar) = 1 Then
+                Dim std As New clsStd
+                If std.setByNumber(ar(0), ar(1)) Then
+                    Me.setStandard std.stdID
+                Else
+                    FLog.addLog "pos", posIDold, "не определить стандарт " & stdFullNumber, True, True
+                    Exit Function
+                End If
+            Else
+                FLog.addLog "pos", posIDold, "не определить имя стандарта " & stdFullNumber, True, True
+                Exit Function
+            End If
+        ElseIf left(stdFullNumber, 2) = "ТУ" Then
+            ar = Split(stdFullNumber, " ")
+            If UBound(ar) = 1 Then
+                Set std = New clsStd
+                If std.setByNumber(ar(0), ar(1)) Then
+                Else
+                    FLog.addLog "pos", posIDold, "не определить стандарт " & stdFullNumber, True, True
+                    Exit Function
+                End If
+            Else
+                Set std = New clsStd
+                If std.setByNumber("ТУ", right(stdFullNumber, Len(stdFullNumber) - 3)) Then
+                Else
+                    FLog.addLog "pos", posIDold, "не определить имя стандарта " & stdFullNumber, True, True
+                    Exit Function
+                End If
+            
+            End If
+        Else
+            FLog.addLog "pos", posIDold, "стандарт не является ГОСТом или ОСТом - " & stdFullNumber, True, True
+            Exit Function
+        End If
+    Else
+        FLog.addLog "pos", posIDold, "имя стандарта не определено", True, True
+        Exit Function
+    End If
+    
+    
+    Dim stdposdefID As Long
+    
+    
+    stdposdefID = selectLongFromBase(cn_srtm, "r_standard_posdef", "relID", "stdID", std.stdID, "posdefID", POS_PD.pdID)
+    
+    
+    If stdposdefID = 0 Then
+        FLog.addLog "pos", posIDold, "не найдено отношение " & posdefName & " и стандарта " & stdFullNumber, True, True
+        Exit Function
+    End If
+    
+    Dim stdpd As clsStdPd
+    Set stdpd = globStdPosdefs(CStr(stdposdefID))
+    
+    ' сортамент
+    '====================================================
+    
+    posPrtName = RS.fields("Наименование позиции").Value & "" ' предварительное присвоение
+    
+    If left(posPrtName, 1) = "d" Then posPrtName = right(posPrtName, Len(posPrtName) - 1)
+    posPrtName = Replace(posPrtName, ",", ".")
+
+    
+    If StrComp(posdefName, "Электроды") = 0 Then
+        srtmID = selectLongFromBase(cn_srtm, "sortament", "srtmID", "srtmName", posPrtName)
+        
+        If srtmID = 0 Then
+            posPrtName = Replace(posPrtName, "-", "")
+            srtmID = selectLongFromBase(cn_srtm, "sortament", "srtmID", "srtmName", posPrtName)
+        End If
+        
+        stdposdefID = selectLongFromBase(cn_srtm, "sortament", "stdposdefID", "srtmID", srtmID)
+        Call std.setStdID(selectLongFromBase(cn_srtm, "r_standard_posdef", "stdID", "posdefID", POS_PD.pdID, "relID", stdposdefID))
+    Else
+        
+        srtmID = selectLongFromBase(cn_srtm, "sortament", "srtmID", "stdposdefID", stdposdefID, "srtmName", posPrtName)
+        
+        If srtmID = 0 Then
+            posPrtName = Replace(posPrtName, "-", "")
+            srtmID = selectLongFromBase(cn_srtm, "sortament", "srtmID", "stdposdefID", stdposdefID, "srtmName", posPrtName)
+        End If
+    End If
+    
+    
+    
+    If srtmID = 0 Then
+        FLog.addLog "pos", posIDold, "не найдена позиция сортамента " & posdefName & " " & posPrtName & " " & stdFullNumber, True, True
+        Exit Function
+    End If
+        
+    
+    
+'    posUMassSrtm = selectDoubleFromBase(cn_srtm, "r_sortament_property", POS_MCALC.mcTable, "srtmID", srtmID)
+    
+    
+'    getSrtmProps ' вместо reloadSrtmProps
+    reloadSrtmProps
+    
+    '================
+    
+    
+  
+    
+    
+    If Not IsNull(RS.fields("Количество позиций").Value) Then
+        posQty = CDbl(RS.fields("Количество позиций").Value)
+    Else
+        posQty = 0
+    End If
+    
+    
+    
+    If Not IsNull(RS.fields("Единичная масса позиции").Value) Then
+        posUMass = CDbl(RS.fields("Единичная масса позиции").Value)
+        bUMCalc = False
+    Else
+        posUMass = 0#
+        bUMCalc = True
+    End If
+    
+    If Not IsNull(RS.fields("Общая масса позиции").Value) Then
+        posCMass = CDbl(RS.fields("Общая масса позиции").Value)
+        bCMCalc = False
+    Else
+        posCMass = 0#
+        bCMCalc = True
+    End If
+    
+'    If Not IsNull(RS.Fields("Обозначение позиции").Value) Then
+'        Set prop = prop.fromExisting("description")
+'        prop.propValue = RS.Fields("Обозначение позиции").Value
+'        pos_props.AddNewProp prop
+'    End If
+    
+    
+'    класс арматуры
+    Dim strArmClass As String
+    If Not IsNull(RS.fields("Класс арматуры позиции").Value) Then
+        strArmClass = RS.fields("Класс арматуры позиции").Value
+        If strArmClass = "A-III" Then
+            strArmClass = "А400 "
+        ElseIf strArmClass = "A-I" Then
+            strArmClass = "A240 "
+        Else
+            strArmClass = ""
+        End If
+    End If
+    
+    ' материал
+    ' =====================================================
+    Dim strNew(2) As String
+    Dim strOld As String
+    Dim bFound As Boolean
+    bFound = False
+    
+    If Not StrComp(posdefName, "Электроды") = 0 Then
+        Dim RSM As New ADODB.Recordset
+        
+        If bUseCursorClient Then RSM.CursorLocation = adUseClient
+        
+        RSM.Open "select * from view_r_posdef_material where posdefID = " & POS_PD.pdID, cn_srtm, adOpenForwardOnly, adLockReadOnly
+        If Not RSM.EOF Then
+            If Not IsNull(RS.fields("Материал позиции").Value) Then
+            
+                strOld = strArmClass & RS.fields("Материал позиции").Value
+                strOld = makeStringRussian(strOld)
+                strOld = Replace(strOld, "Ст3 кп", "Ст3кп")
+                strOld = Replace(strOld, "380-94", "380-2005")
+                strOld = Replace(strOld, "535-88", "535-2005")
+                If strOld = "25Г2С" Then strOld = "A240 25Г2С"
+                
+                RSM.MoveFirst
+                Do
+                
+                    
+                    strNew(0) = RSM.fields("matName").Value
+                    strNew(1) = RSM.fields("stdTypeName").Value
+                    strNew(2) = RSM.fields("stdNumber").Value
+                    
+                    strNew(0) = makeStringRussian(strNew(0))
+                    strNew(1) = makeStringRussian(strNew(1))
+                    strNew(2) = makeStringRussian(strNew(2))
+                    strNew(2) = Replace(strNew(2), "*", "")
+                    
+                    If InStr(strOld, strNew(0)) > 0 And InStr(strOld, strNew(1)) > 0 And InStr(strOld, strNew(2)) > 0 Then
+                        matID = RSM.fields("matID").Value
+                        bFound = True
+                        Exit Do
+                    End If
+                
+                    RSM.MoveNext
+                Loop Until RSM.EOF
+            
+            
+            
+            Else ' материал для позиции не определен
+            
+                FLog.addLog "pos", posIDold, "не определен материал для позиции", True, True
+'                Exit Function
+            
+            End If
+        Else ' в базе нет такого posdefID
+        
+            FLog.addLog "pos", posIDold, "не найден материал " & strOld & " для " & posdefName, True, True
+            Exit Function
+        
+        End If
+        
+'        If bFound Then
+'            matName = RSM.Fields("matName").Value
+''            Set matStd = globStds(CStr(RSM.Fields("stdID").Value))
+'        Else
+'
+'            FLog.addLog "pos", posIDold, "не найден материал " & strOld & " для " & posdefName, True, True
+''            Exit Function
+'
+'            matID = 0
+'            matName = ""
+'        End If
+        
+        RSM.Close
+        Set RSM = Nothing
+    
+    End If
+    
+
+    
+    ' ======= геометрические параметры ================
+    ' =====================================================
+    
+    
+    If Not (RS.fields("Длина позиции").Value = 1000) Then addd RS, "Длина позиции", "length"
+    addd RS, "Сегмент кольца позиции", "segment"
+    addd RS, "Диаметр позиции", "diameter"
+    addd RS, "Радиус позиции", "radiusout"
+    addd RS, "Внешний радиус позиции", "radiusout"
+    addd RS, "Внутренний радиус позиции", "radiusinn"
+    addd RS, "Толщина позиции", "thickness"
+    addd RS, "Ширина позиции", "width"
+    addd RS, "Высота позиции", "height"
+    addd RS, "Шаг позиций", "spacing"
+    
+
+'    Debug.Print Me.posNumber
+    
+    import = True
+    
+    
+    
+    Exit Function
+    
+import_ERR:
+    import = False
+    MsgBox "[" & err.Number & "] " & err.Description, vbCritical, "import - Error"
+    
 End Function
 

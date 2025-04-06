@@ -632,6 +632,12 @@ Begin VB.Form frmSrtmLoad
          Caption         =   "Считать"
       End
    End
+   Begin VB.Menu mnuSettings 
+      Caption         =   "Настройки"
+      Begin VB.Menu mnuSettingsUseRefs 
+         Caption         =   "Обрабатывать референсы"
+      End
+   End
 End
 Attribute VB_Name = "frmSrtmLoad"
 Attribute VB_GlobalNameSpace = False
@@ -892,7 +898,7 @@ Public Sub savePartsOkInList()
     RS.Close
     Set RS = Nothing
     
-    Unload frmCalc
+    If Not frmCalc Is Nothing Then Unload frmCalc
     
     
     F1.loadListGrid lngCurCatListID
@@ -1003,7 +1009,7 @@ Private Sub FG_GotFocus()
 End Sub
 
 
-Private Sub FG_MouseDown(Button As Integer, Shift As Integer, x As Single, Y As Single)
+Private Sub FG_MouseDown(Button As Integer, Shift As Integer, X As Single, Y As Single)
 
     If Button = 2 Then
     
@@ -1908,9 +1914,9 @@ End Sub
 Private Sub mnuGetFromModelByParam_Click(Index As Integer)
 '/******************************************************************************
 
-    'On Error GoTo mnuGetFromModelByParam_Click_ERR
+    On Error GoTo mnuGetFromModelByParam_Click_ERR
 
-    getFromModel False, mnuGetFromModelByParam(Index).Tag
+    getFromModel mnuSettingsUseRefs.Checked, mnuGetFromModelByParam(Index).Tag
 
 Exit Sub
 
@@ -2144,6 +2150,21 @@ End Function
 
 
 '/******************************************************************************
+Private Sub mnuSettingsUseRefs_Click()
+'/******************************************************************************
+
+    On Error GoTo mnuSettingsUseRefs_Click_ERR
+
+    mnuSettingsUseRefs.Checked = Not mnuSettingsUseRefs.Checked
+
+Exit Sub
+
+mnuSettingsUseRefs_Click_ERR:
+    'MsgBox "[" & err.Number & "] " & err.Description, vbCritical, "mnuSettingsUseRefs_Click - Error"
+
+End Sub
+
+'/******************************************************************************
 Private Sub mnuShow_Click(Index As Integer)
 '/******************************************************************************
 
@@ -2203,7 +2224,7 @@ Private Sub mnuShow_Click(Index As Integer)
             Dim pScale As Point3d
             Dim dZF As Double
             
-            pOrigin.x = (el.Range.low.x + el.Range.high.x) / 2
+            pOrigin.X = (el.Range.low.X + el.Range.high.X) / 2
             pOrigin.Y = (el.Range.low.Y + el.Range.high.Y) / 2
             pOrigin.z = (el.Range.low.z + el.Range.high.z) / 2
             
@@ -2211,7 +2232,7 @@ Private Sub mnuShow_Click(Index As Integer)
             
             Dim tm As Transform3d
             tm = Transform3dIdentity()
-            tm.TranslationX = -pOrigin.x
+            tm.TranslationX = -pOrigin.X
             tm.TranslationY = -pOrigin.Y
             tm.TranslationZ = -pOrigin.z
             el.Transform tm
@@ -2221,21 +2242,21 @@ Private Sub mnuShow_Click(Index As Integer)
             tm.TranslationZ = 0
             el.Transform tm
             tm = Transform3dIdentity()
-            tm.TranslationX = pOrigin.x
+            tm.TranslationX = pOrigin.X
             tm.TranslationY = pOrigin.Y
             tm.TranslationZ = pOrigin.z
             el.Transform tm
             
             
-            pExtents.x = el.Range.high.x - el.Range.low.x
+            pExtents.X = el.Range.high.X - el.Range.low.X
             pExtents.Y = el.Range.high.Y - el.Range.low.Y
 '            pExtents.Z = el.Range.High.Z - el.Range.Low.Z
             
-            pScale.x = pExtents.x / v.Extents.x
+            pScale.X = pExtents.X / v.Extents.X
             pScale.Y = pExtents.Y / v.Extents.Y
 '            pScale.Z = pExtents.Z / v.Extents.Z
             
-            dZF = pScale.x
+            dZF = pScale.X
             If pScale.Y > dZF Then dZF = pScale.Y
 '            If pScale.Z > dZF Then dZF = pScale.Z
 
@@ -2323,17 +2344,17 @@ Public Function checkPartByRange(prt1 As clsPart, prt2 As clsPart) As Boolean
 
     If prt1.s_elID = prt2.s_elID And prt1.ts_mrPtr = prt2.ts_mrPtr Then checkPartByRange = True
 
-    If prt1.rng.high.x = 0 And prt1.rng.high.Y = 0 And prt1.rng.high.z = 0 And prt1.rng.low.x = 0 And prt1.rng.low.Y = 0 And prt1.rng.low.z = 0 Then checkPartByRange = True
-    If prt2.rng.high.x = 0 And prt2.rng.high.Y = 0 And prt2.rng.high.z = 0 And prt2.rng.low.x = 0 And prt2.rng.low.Y = 0 And prt2.rng.low.z = 0 Then checkPartByRange = True
+    If prt1.rng.high.X = 0 And prt1.rng.high.Y = 0 And prt1.rng.high.z = 0 And prt1.rng.low.X = 0 And prt1.rng.low.Y = 0 And prt1.rng.low.z = 0 Then checkPartByRange = True
+    If prt2.rng.high.X = 0 And prt2.rng.high.Y = 0 And prt2.rng.high.z = 0 And prt2.rng.low.X = 0 And prt2.rng.low.Y = 0 And prt2.rng.low.z = 0 Then checkPartByRange = True
 
 
-    If Abs(prt1.rng.high.x - prt2.rng.high.x) > 10 Then checkPartByRange = True
+    If Abs(prt1.rng.high.X - prt2.rng.high.X) > 10 Then checkPartByRange = True
 
     If Abs(prt1.rng.high.Y - prt2.rng.high.Y) > 10 Then checkPartByRange = True
 
     If Abs(prt1.rng.high.z - prt2.rng.high.z) > 10 Then checkPartByRange = True
 
-    If Abs(prt1.rng.low.x - prt2.rng.low.x) > 10 Then checkPartByRange = True
+    If Abs(prt1.rng.low.X - prt2.rng.low.X) > 10 Then checkPartByRange = True
 
     If Abs(prt1.rng.low.Y - prt2.rng.low.Y) > 10 Then checkPartByRange = True
 
@@ -2476,6 +2497,8 @@ Public Sub processTagSet(mr As ModelReference, tsName As String, sCatIds As Stri
     Dim prt As clsPart
     Dim prtCurEl As clsPart
     Dim strPartName As String
+    Dim strPartSuffix As String
+    Dim lngPartTagParam As Long
     '    Dim bOk As Boolean
     Dim RS As New ADODB.Recordset
     
@@ -2521,17 +2544,41 @@ Public Sub processTagSet(mr As ModelReference, tsName As String, sCatIds As Stri
         '        ElseIf el.HasAnyTags Then
         
         strPartName = ""
-        'strPartNameParams = ""
+        strPartSuffix = ""
+        lngPartTagParam = 0
 
         
         If el.HasAnyTags Then
-            
             
             Set tel = getTagElement(ts, el, "name")
             
             If Not tel Is Nothing Then
                 
                 strPartName = tel.Value
+                
+                If Not curFrml Is Nothing Then
+                
+                    If Len(speccfg("Model")("Formular3")("Param1").attval("fromtag")) > 0 Then
+                        If CBool(speccfg("Model")("Formular3")("Param1").attval("fromtag")) Then
+                        
+                            Set tel = getTagElement(ts, el, speccfg("Model")("Formular3")("Param1").attval("tagname"))
+                            
+                            If Not tel Is Nothing Then
+                            
+                                If CBool(speccfg("Model")("Formular3")("Param1").attval("addtoname")) And _
+                                    Val(speccfg("Model")("Formular3")("Param1").attval("koef")) > 0 Then
+                                
+                                    lngPartTagParam = Val(tel.Value) * Val(speccfg("Model")("Formular3")("Param1").attval("koef"))
+                                    strPartSuffix = "-" & CStr(lngPartTagParam)
+                                
+                                End If
+                                
+                            End If
+                        
+                        End If
+                    End If
+                
+                End If
                 
             Else
                 ' в элементе нет набора тегов strTSName
@@ -2601,7 +2648,11 @@ Public Sub processTagSet(mr As ModelReference, tsName As String, sCatIds As Stri
             prtCurEl.partName = strPartName
             prtCurEl.partNameOld = strPartName
             
-            If bPrm And Not curFrml Is Nothing Then
+            If lngPartTagParam > 0 Then
+            
+                'prtCurEl.prms.Add lngPartTagParam 'later
+            
+            ElseIf bPrm And Not curFrml Is Nothing Then
             
                 Dim splt_qty As Integer
                 Dim prms_qty As Integer
@@ -2671,7 +2722,7 @@ Public Sub processTagSet(mr As ModelReference, tsName As String, sCatIds As Stri
             prtCurEl.s_elID = DLongToString(el.ID)
             prtCurEl.ts_mrPtr = mr.MdlModelRefP
             
-            prtCurEl.setRange el.Range.low.x, el.Range.low.Y, el.Range.low.z, el.Range.high.x, el.Range.high.Y, el.Range.high.z
+            prtCurEl.setRange el.Range.low.X, el.Range.low.Y, el.Range.low.z, el.Range.high.X, el.Range.high.Y, el.Range.high.z
             
             prtCurEl.partOK = True
             
@@ -2714,7 +2765,7 @@ Public Sub processTagSet(mr As ModelReference, tsName As String, sCatIds As Stri
                         prt.partNameOld & "' and " & sCatIds & " and deleted = 0 and partStatusID <> 3", cn_data, adOpenStatic, adLockReadOnly
             
             
-            
+            Dim bRun As Boolean
             Dim prtID As Long
             prt.iMaxPosNumber = 0
             prtID = 0
@@ -2724,7 +2775,23 @@ Public Sub processTagSet(mr As ModelReference, tsName As String, sCatIds As Stri
                 
                 prt.catID = RS.fields("catID").Value
                 prt.partID = RS.fields("partID").Value
-                If Not bPrm Then prt.bRunMet = getBool(RS.fields("partMainPosEP").Value)
+                
+                bRun = getBool(RS.fields("partMainPosEP").Value)
+                
+                If Not bPrm Then
+                    prt.bRunMet = bRun
+                Else
+                
+                    If bRun And lngPartTagParam > 0 Then
+                        prtCurEl.prms.Add lngPartTagParam 'см выше
+                        prtCurEl.partName = strPartName & strPartSuffix
+                        
+                        strMes = strMes & ", длина " & lngPartTagParam
+
+                    Else
+                    End If
+                
+                End If
                 
                 
                 Do
@@ -2780,35 +2847,39 @@ Public Sub processTagSet(mr As ModelReference, tsName As String, sCatIds As Stri
                 Dim o As clsObj
                 i = 0
                 For Each o In curFrml.kinder
+                
+                    If o.props.Count > 0 Then
                     
-                    RS.Open "select * from [view_position] where partID = " & prt.partID & " and " & o.props("criteria").propValue, cn_data, adOpenStatic, adLockReadOnly
-                    
-                    i = i + 1
-                    
-                    If Not RS.EOF Then
-                        RS.MoveFirst
+                        RS.Open "select * from [view_position] where partID = " & prt.partID & " and " & o.props("criteria").propValue, cn_data, adOpenStatic, adLockReadOnly
                         
-                        sposID = CStr(RS.fields("posID").Value)
+                        i = i + 1
                         
-                        expr = o.props("expr").propValue ' strSpecFormula
+                        If Not RS.EOF Then
+                            RS.MoveFirst
+                            
+                            sposID = CStr(RS.fields("posID").Value)
+                            
+                            expr = o.props("expr").propValue ' strSpecFormula
+                            
+                            Dim objj As clsObj
+                            Set objj = getColItem(prt.koefs, sposID)
+                            
+                            If Not objj Is Nothing Then
+                                objj.props("expr").propValue = expr
+                            End If
+                            
+                            ' считаем partQty при сохранении
+    
+                        ElseIf i = 1 Then
                         
-                        Dim objj As clsObj
-                        Set objj = getColItem(prt.koefs, sposID)
+                            lngClr = lngLightRed
+                            strMes = strMes & ", некорректный параметр основной позиции"
                         
-                        If Not objj Is Nothing Then
-                            objj.props("expr").propValue = expr
                         End If
                         
-                        ' считаем partQty при сохранении
-
-                    ElseIf i = 1 Then
-                    
-                        lngClr = lngLightRed
-                        strMes = strMes & ", некорректный параметр основной позиции"
-                    
+                        RS.NextRecordset
                     End If
                     
-                    RS.NextRecordset
                     
                     
                 Next o

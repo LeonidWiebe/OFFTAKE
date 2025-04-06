@@ -579,7 +579,7 @@ Begin VB.Form F1
             FrontTabForeColor=   -2147483630
             Caption         =   "Каталоги|Изделия|Арматура|Спецификация|Выборка|Стандарты|Управление|Wise"
             Align           =   0
-            CurrTab         =   2
+            CurrTab         =   1
             FirstTab        =   0
             Style           =   4
             Position        =   0
@@ -605,7 +605,7 @@ Begin VB.Form F1
             AccessibleRole  =   37
             Begin C1SizerLibCtl.C1Elastic C1Elastic5 
                Height          =   9555
-               Left            =   11295
+               Left            =   11595
                TabIndex        =   75
                TabStop         =   0   'False
                Top             =   330
@@ -1632,7 +1632,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic C1Elastic13 
                Height          =   9555
-               Left            =   10995
+               Left            =   11295
                TabIndex        =   56
                TabStop         =   0   'False
                Top             =   330
@@ -2129,7 +2129,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic C1Elastic7 
                Height          =   9555
-               Left            =   10695
+               Left            =   10995
                TabIndex        =   36
                TabStop         =   0   'False
                Top             =   330
@@ -2883,7 +2883,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic elOfftake 
                Height          =   9555
-               Left            =   10395
+               Left            =   10695
                TabIndex        =   11
                TabStop         =   0   'False
                Top             =   330
@@ -3120,7 +3120,7 @@ Begin VB.Form F1
                         ImageIndex      =   13
                         Style           =   5
                         BeginProperty ButtonMenus {66833FEC-8583-11D1-B16A-00C0F0283628} 
-                           NumButtonMenus  =   2
+                           NumButtonMenus  =   3
                            BeginProperty ButtonMenu1 {66833FEE-8583-11D1-B16A-00C0F0283628} 
                               Key             =   "Offt_st"
                               Text            =   "Стандартно"
@@ -3128,6 +3128,9 @@ Begin VB.Form F1
                            BeginProperty ButtonMenu2 {66833FEE-8583-11D1-B16A-00C0F0283628} 
                               Key             =   "Offt_in"
                               Text            =   "Объединить по первому столбцу"
+                           EndProperty
+                           BeginProperty ButtonMenu3 {66833FEE-8583-11D1-B16A-00C0F0283628} 
+                              Object.Visible         =   0   'False
                            EndProperty
                         EndProperty
                      EndProperty
@@ -3208,7 +3211,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic elSpec 
                Height          =   9555
-               Left            =   10095
+               Left            =   10395
                TabIndex        =   10
                TabStop         =   0   'False
                Top             =   330
@@ -3487,7 +3490,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic elSrtm 
                Height          =   9555
-               Left            =   45
+               Left            =   10095
                TabIndex        =   9
                TabStop         =   0   'False
                Top             =   330
@@ -3999,7 +4002,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic elEmbParts 
                Height          =   9555
-               Left            =   -10005
+               Left            =   45
                TabIndex        =   8
                TabStop         =   0   'False
                Top             =   330
@@ -4759,7 +4762,7 @@ Begin VB.Form F1
             End
             Begin C1SizerLibCtl.C1Elastic elCats 
                Height          =   9555
-               Left            =   -10305
+               Left            =   -10005
                TabIndex        =   7
                TabStop         =   0   'False
                Top             =   330
@@ -6160,14 +6163,14 @@ Begin VB.Form F1
             AutoSize        =   2
             Object.Width           =   1773
             MinWidth        =   1764
-            TextSave        =   "30.10.2024"
+            TextSave        =   "20.03.2025"
          EndProperty
          BeginProperty Panel3 {8E3867AB-8586-11D1-B16A-00C0F0283628} 
             Style           =   5
             AutoSize        =   2
             Object.Width           =   1244
             MinWidth        =   1235
-            TextSave        =   "15:24"
+            TextSave        =   "13:42"
          EndProperty
          BeginProperty Panel4 {8E3867AB-8586-11D1-B16A-00C0F0283628} 
             AutoSize        =   2
@@ -7091,6 +7094,12 @@ Begin VB.Form F1
       End
       Begin VB.Menu mnuCatsTreePWArm 
          Caption         =   "Каталог арматуры"
+      End
+      Begin VB.Menu mnuCatsTreePWVers 
+         Caption         =   "Следующая версия"
+      End
+      Begin VB.Menu mnuCatsTreePWBuf 
+         Caption         =   "Версия из буфера"
       End
    End
 End
@@ -12736,6 +12745,15 @@ Private Sub Form_Load()
     Next i
     
     
+    
+    Dim X As colAts
+    i = 1
+    For Each X In offtcfg("Interface")("Button" & 1)
+        Me.tbOfftake.Buttons("Offtake").ButtonMenus(i).Visible = True
+        Me.tbOfftake.Buttons("Offtake").ButtonMenus(i).text = X.attval("label")
+        Me.tbOfftake.Buttons("Offtake").ButtonMenus(i).Tag = X.attval("tag")
+        i = i + 1
+    Next
    
     
     Me.mnuHelpVideo.Enabled = False
@@ -12918,6 +12936,106 @@ Exit Sub
 
 saveOfftake_ERR:
     MsgBox "[" & err.Number & "] " & err.Description, vbInformation, "saveOfftake - Error"
+
+End Sub
+
+
+'/******************************************************************************
+Public Sub loadOfftake4(catListID As Long, strFuncTag As String)
+'/******************************************************************************
+
+    On Error GoTo loadOfftake4_ERR
+    
+    Dim strSQL As String
+    
+    strSQL = offtcfg(strFuncTag)("SQL").attval("text")
+    
+    If Len(strSQL) = 0 Then Exit Sub
+    
+    Dim X As colAts
+    
+    For Each X In offtcfg(strFuncTag)
+        If X.atname = "Param" And Len(X.attval("label") > 0) Then
+            If X.attval("name") = "dbname" Then
+                strSQL = Replace(strSQL, X.attval("label"), conn.strBaseName)
+            ElseIf X.attval("name") = "objectID" Then
+                strSQL = Replace(strSQL, X.attval("label"), CStr(catListID))
+            ElseIf X.attval("name") = "objID" Then
+                strSQL = Replace(strSQL, X.attval("label"), CStr(objs("catlist")))
+            ElseIf X.attval("name") = "full" Then
+                strSQL = Replace(strSQL, X.attval("label"), CStr(Abs(CInt(Me.tbOfftake.Buttons("Nulls").Value = tbrPressed))))
+            End If
+        
+        End If
+    Next X
+
+    Dim RS As New ADODB.Recordset
+
+    RS.Open strSQL, cn_data, adOpenForwardOnly, adLockReadOnly
+    
+    Set Me.fgOfftake.DataSource = RS
+    
+    RS.Close
+    
+    Set RS = Nothing
+    
+    
+    
+    For Each X In offtcfg(strFuncTag)
+        If X.atname = "Column" And Len(X.attval("name") > 0) Then
+        
+            If Len(X.attval("label")) > 0 Then
+            
+                fgOfftake.TextMatrix(0, fgOfftake.ColIndex(X.attval("name"))) = X.attval("label")
+                
+            End If
+        
+            If X.attval("merge") = "true" Then
+            
+                fgOfftake.MergeCol(fgOfftake.ColIndex(X.attval("name"))) = True
+                
+            End If
+            
+            If Len(X.attval("format")) > 0 Then
+            
+                fgOfftake.ColFormat(fgOfftake.ColIndex(X.attval("name"))) = X.attval("format")
+                
+            End If
+            
+            If Len(X.attval("subtotal")) > 0 Then
+            
+                fgOfftake.Subtotal flexSTSum, -1, fgOfftake.ColIndex(X.attval("name")), , lngGrey, , True, X.attval("text")
+                
+                Me.SB.Panels(X.attval("subtotal")).text = "Выборка: " & Format(fgOfftake.TextMatrix(fgOfftake.Rows - 1, fgOfftake.ColIndex(X.attval("name"))), sFmt1) & "  "
+                Me.SB.Panels(X.attval("subtotal")).AutoSize = sbrContents
+            
+            End If
+        
+        End If
+    Next X
+    
+    
+'    ' subtotal
+'
+'    fgOfftake.Subtotal flexSTSum, -1, fgOfftake.ColIndex("mass"), , lngGrey, , True, "Общая масса"
+'
+'    Me.SB.Panels("offtmass").text = "Выборка: " & Format(fgOfftake.TextMatrix(fgOfftake.Rows - 1, fgOfftake.ColIndex("mass")), sFmt1) & "  "
+'    Me.SB.Panels("offtmass").AutoSize = sbrContents
+'
+'
+'    ' merge
+'
+'    fgOfftake.MergeCol(fgOfftake.ColIndex("partName")) = True
+'
+'
+'    ' format
+'
+'    fgOfftake.ColFormat(fgOfftake.ColIndex("mass")) = "0.00"
+
+Exit Sub
+
+loadOfftake4_ERR:
+    MsgBox "[" & err.Number & "] " & err.Description, vbCritical, "loadOfftake4 - Error"
 
 End Sub
 
@@ -16221,7 +16339,6 @@ End Sub
 
 
 
-
 '/******************************************************************************
 Private Sub mnuCatsTreeCopyHere_Click()
 '/******************************************************************************
@@ -16299,14 +16416,15 @@ Private Sub mnuCatsTreeCopyHere_Click()
         
         Dim fc As New frmCopy
         
+        fc.checkListCopyEnabled ID
+        
         fc.txtSrcName.text = copyInfo.sOldCatName
         fc.txtDstName.text = copyInfo.sNewCatName
         
         partsTreeAddLabel fc.lblSrc, tvGetTreeNode(tvCats, ndp.KEY), , False, , True
         partsTreeAddLabel fc.lblDst, tvGetTreeNode(tvCats, ndp.KEY), , False, , True
         
-        
-        
+       
         fc.Show 1, Me
         
         If Not copyInfo.bOk Then Exit Sub
@@ -16595,6 +16713,8 @@ Private Sub createCatalog(catTypeID As Long, Optional prnt_objID As Long = 0, Op
     
     
     
+    ' crcat 0 - define cat name
+    
     If ndToRemove Is Nothing Then
         strName = InputBox("Наименование каталога", "", "Новый каталог " & (ndPnt.children + 1))
         Set o = globObjs(CStr(objs("catalog")))
@@ -16614,26 +16734,22 @@ Private Sub createCatalog(catTypeID As Long, Optional prnt_objID As Long = 0, Op
     If Len(Trim(strName)) = 0 Then Exit Sub
     
     
-    
+    ' crcat 1 - catalog record
     
     If o.objname = "docset" Then
         catID = insertDataInBase(cn_data, "i_catalog", "catName", strName, "catTypeID", catTypeID, "dsDrawingsID", ID)
-    
     Else
         catID = insertDataInBase(cn_data, "i_catalog", "catName", strName, "catTypeID", catTypeID)
-    
     End If
     
     
     
+    ' crcat 2 - cats tree node
 
-    
     If catID > 0 Then
     
         If Not ndToRemove Is Nothing Then
-        
             tvCats.Nodes.Remove ndToRemove.KEY
-        
         End If
     
         Dim prnkey As String
@@ -16644,15 +16760,18 @@ Private Sub createCatalog(catTypeID As Long, Optional prnt_objID As Long = 0, Op
             prnkey = po.objname & pID
         End If
     
-    
         Set ndNew = tvCats.Nodes.Add(prnkey, tvwChild, "catalog" & catID, strName, strCatTypeName)
         
         ndNew.Tag = "catalog"
         Call writeOperationS(operCreate, "catalog", catID, strName)
+        
     Else
         MsgBox "Каталог не создан"
         Exit Sub
     End If
+    
+    
+    ' crcat 3 - create caatlist
     
     If po.objname <> "catalog" Then
     
@@ -16661,9 +16780,10 @@ Private Sub createCatalog(catTypeID As Long, Optional prnt_objID As Long = 0, Op
     End If
 
 
-    ' relations
+    ' crcat 4 - relations
 
     Call insertDataInBase(cn_data, "r_object_catalog", "objID", pobjID, "catalogID", catID, "objectID", pID)
+    
     
     
     If po.objname = "pwbld" Then
@@ -16687,11 +16807,7 @@ Private Sub createCatalog(catTypeID As Long, Optional prnt_objID As Long = 0, Op
             
             End If
         
-        
-        
         End If
-    
-    
     
     End If
     
@@ -17152,6 +17268,7 @@ Private Function copyCatList(catIDwhere As Long, catlistIDtoCopy As Long, Option
     Dim catListID As Long
     Dim RS As New ADODB.Recordset
     Dim RSto As New ADODB.Recordset
+    Dim RSto2 As New ADODB.Recordset
     Dim prt As clsPart
     Dim prtIDtoSave As Long
     
@@ -17215,6 +17332,9 @@ Private Function copyCatList(catIDwhere As Long, catlistIDtoCopy As Long, Option
                 RSto.fields("partQty").Value = RS.fields("partQty").Value
                 RSto.fields("partSortID").Value = RS.fields("partSortID").Value
                 RSto.fields("objID").Value = RS.fields("objID").Value
+                RSto.fields("partNameOver").Value = RS.fields("partNameOver").Value
+                RSto.fields("koef").Value = RS.fields("koef").Value
+                RSto.fields("clpID").Value = RS.fields("relID").Value ' для дальнейшего копирования r_catlist_position
             
             End If
             
@@ -17226,8 +17346,52 @@ Private Function copyCatList(catIDwhere As Long, catlistIDtoCopy As Long, Option
         Set RSto = Nothing
     End If
     
+    
+    ' ==========================
+    
+    Dim strSQL As String
+    
+    strSQL = "SELECT c1.relID as newclpID, c1.catlistID as newclID, c2.*"
+    strSQL = strSQL & " FROM r_catlist_part c1"
+    strSQL = strSQL & " inner join r_catlist_position c2 on c1.clpID = c2.clpID" ' c1.clpID - копия старого relID, см выше
+    strSQL = strSQL & " where c1.catListID = " & catListID
+    
+    RS.NextRecordset
+
+    RS.Open strSQL, cn_data, adOpenForwardOnly, adLockReadOnly
+
+    If Not RS.EOF Then
+
+        RSto2.Open "select * from r_catlist_position", cn_data, adOpenKeyset, adLockBatchOptimistic
+
+        RS.MoveFirst
+        Do
+
+            RSto2.AddNew
+            RSto2.fields("clpID").Value = RS.fields("newclpID").Value
+            RSto2.fields("catListID").Value = RS.fields("newclID").Value
+            
+            RSto2.fields("partID").Value = RS.fields("partID").Value
+            RSto2.fields("posNumber").Value = RS.fields("posNumber").Value
+            RSto2.fields("posQty").Value = RS.fields("posQty").Value
+            RSto2.fields("objID").Value = RS.fields("objID").Value
+            RSto2.fields("koef").Value = RS.fields("koef").Value
+            
+
+            RS.MoveNext
+        Loop Until RS.EOF
+
+        RSto2.UpdateBatch
+        RSto2.Close
+        Set RSto2 = Nothing
+
+    End If
+    
+    
     RS.Close
     Set RS = Nothing
+    
+    
     
     Dim TN As Node
     If addTreeNode(tvCats, TN, "catalog" & catIDwhere, tvwChild, "catlist" & catListID, catlistName, "catlist") Then
@@ -17638,6 +17802,8 @@ Private Sub mnuCatsTreePaste_Click()
         
         Dim fc As New frmCopy
         
+        fc.checkListCopyEnabled lngCurCatalogIDtoCopy
+        
         Dim projSrcID As Long
         Dim projDstID As Long
         projSrcID = getProjID(ntc, 0)
@@ -17796,6 +17962,287 @@ mnuCatsTreePaste_Click_ERR:
     
 End Sub
 
+'/******************************************************************************
+Private Sub mnuCatsTreePWBuf_Click()
+'/******************************************************************************
+
+    On Error GoTo mnuCatsTreePWBuf_Click_ERR
+
+    Dim nd As Node
+    Dim ndprev As Node
+    Dim pobjID As Long
+    Dim objID As Long
+    Dim pID As Long
+    Dim dsID As Long
+    Dim catIDsrc As Long
+    Dim catIDdst As Long
+    Dim iVersPrev As Integer
+    Dim iVers As Integer
+    Dim iSub As pwbldsub
+
+    Set nd = tvCats.SelectedItem
+    
+    If nd Is Nothing Then Exit Sub
+    
+    If left(nd.KEY, 6) = "docset" Then
+    
+        getNodeIds nd, objID, dsID, False
+        
+        getNodeIds nd.parent, pobjID, pID, False, iSub
+
+        catIDsrc = lngCurCatalogIDtoCopy
+    
+        If dsID > 0 And catIDsrc > 0 Then
+        
+            Dim ct As clsCat
+            Set ct = cCats(CStr(catIDsrc))
+            
+
+            copyInfo.bOk = False
+            copyInfo.sOldCatName = ct.catName
+            copyInfo.sNewCatName = nd.text
+            Set copyInfo.cn_dst = Nothing
+            Set copyInfo.cn_src = Nothing
+            copyInfo.sBaseNameDst = ""
+            copyInfo.sBaseNameSrc = ""
+            
+            Dim fc As New frmCopy
+            
+            fc.txtSrcName.text = copyInfo.sOldCatName
+            fc.txtDstName.text = copyInfo.sNewCatName
+            
+            fc.chkLinks.Value = 0
+            fc.chkLinks.Enabled = False
+            
+            fc.chkListContent.Value = 0
+            fc.chkListContent.Enabled = False
+            
+            fc.chkLists.Value = 0
+            fc.chkLists.Enabled = False
+            
+            fc.chkRedirect.Value = 0
+            fc.chkRedirect.Enabled = False
+            
+            fc.chkReinChilds.Value = 0
+            fc.chkReinChilds.Enabled = False
+            
+            fc.txtDstName.Enabled = False
+            
+            'fc.btnOK.Caption = "Создать версию"
+            
+            'partsTreeAddLabel fc.lblSrc, tvGetTreeNode(tvCats, ndp.KEY), , False, , True
+            'partsTreeAddLabel fc.lblDst, tvGetTreeNode(tvCats, ndp.KEY), , False, , True
+            
+            
+            
+            fc.Show 1, Me
+            
+            If Not copyInfo.bOk Then Exit Sub
+            
+            Me.MousePointer = 11
+            
+            catIDdst = copyCatalog2(pID, pobjID, catIDsrc, , , , copyInfo.bReinChilds, copyInfo.sNewCatName)
+            
+            
+            If catIDdst > 0 Then
+            
+                updateTableInBase cn_data, "i_catalog", "dsDrawingsID", dsID, "catID", catIDdst
+            
+                
+                Dim pntkey As String
+                pntkey = nd.parent.KEY
+
+                tvCats.Nodes.Remove nd.KEY
+
+                Dim ndNew As Node
+                Set ndNew = tvCats.Nodes.Add(pntkey, tvwChild, "catalog" & catIDdst, copyInfo.sNewCatName, cattypes(ct.catTypeID).tnNum)
+    
+                ndNew.Tag = "catalog"
+                Call writeOperationS(operCreate, "catalog", catIDdst, "копия " & ct.catName)
+            
+                Dim ctnew As New clsCat
+                'Set ctnew = cCats(CStr(catIDdst))
+                ctnew.loadCatByID Nothing, catIDdst, True
+                cCats.AddCatSimple ctnew, CStr(catIDdst)
+
+            
+                setCatlistDefault catIDsrc, catIDdst
+            
+                selectTreeNode "catalog" & catIDdst, tvCats
+            
+            End If
+            
+            
+            Me.MousePointer = 0
+        
+        
+
+            
+            
+        End If
+
+    Else
+        Exit Sub
+    End If
+    
+
+
+
+
+Exit Sub
+
+mnuCatsTreePWBuf_Click_ERR:
+    Me.MousePointer = 0
+    'MsgBox "[" & err.Number & "] " & err.Description, vbCritical, "mnuCatsTreePWBuf_Click - Error"
+
+End Sub
+
+'/******************************************************************************
+Private Sub mnuCatsTreePWVers_Click()
+'/******************************************************************************
+
+    On Error GoTo mnuCatsTreePWVers_Click_ERR
+
+    Dim nd As Node
+    Dim ndprev As Node
+    Dim pobjID As Long
+    Dim objID As Long
+    Dim pID As Long
+    Dim dsID As Long
+    Dim catIDsrc As Long
+    Dim catIDdst As Long
+    Dim iVersPrev As Integer
+    Dim iVers As Integer
+    Dim iSub As pwbldsub
+
+    Set nd = tvCats.SelectedItem
+    Set ndprev = tvCats.SelectedItem.Previous
+    
+    If nd Is Nothing Then Exit Sub
+    If ndprev Is Nothing Then Exit Sub
+    
+    If left(ndprev.KEY, 7) = "catalog" And left(nd.KEY, 6) = "docset" Then
+    
+        getNodeIds nd, objID, dsID, False
+        
+        getNodeIds nd.parent, pobjID, pID, False, iSub
+
+    
+    
+        If dsID > 0 And getNodeIds(ndprev, objID, catIDsrc, False) Then
+        
+            Dim ct As clsCat
+            Set ct = cCats(CStr(catIDsrc))
+            
+            iVersPrev = ct.getVersNumFromName(ndprev.text)
+            iVers = ct.getVersNumFromName(nd.text)
+            
+            If iVersPrev + 1 = iVers Then
+            
+
+                
+                copyInfo.bOk = False
+                copyInfo.sOldCatName = ndprev.text
+                copyInfo.sNewCatName = nd.text
+                Set copyInfo.cn_dst = Nothing
+                Set copyInfo.cn_src = Nothing
+                copyInfo.sBaseNameDst = ""
+                copyInfo.sBaseNameSrc = ""
+                
+                Dim fc As New frmCopy
+                
+                fc.txtSrcName.text = copyInfo.sOldCatName
+                fc.txtDstName.text = copyInfo.sNewCatName
+                
+                fc.chkLinks.Value = 0
+                fc.chkLinks.Enabled = False
+                
+                fc.chkListContent.Value = 0
+                fc.chkListContent.Enabled = False
+                
+                fc.chkLists.Value = 0
+                fc.chkLists.Enabled = False
+                
+                fc.chkRedirect.Value = 0
+                fc.chkRedirect.Enabled = False
+                
+                fc.chkReinChilds.Value = 0
+                fc.chkReinChilds.Enabled = False
+                
+                fc.txtDstName.Enabled = False
+                
+                fc.btnOK.Caption = "Создать версию"
+                
+                'partsTreeAddLabel fc.lblSrc, tvGetTreeNode(tvCats, ndp.KEY), , False, , True
+                'partsTreeAddLabel fc.lblDst, tvGetTreeNode(tvCats, ndp.KEY), , False, , True
+                
+                
+                
+                fc.Show 1, Me
+                
+                If Not copyInfo.bOk Then Exit Sub
+                
+                Me.MousePointer = 11
+                
+                catIDdst = copyCatalog2(pID, pobjID, catIDsrc, , , , copyInfo.bReinChilds, copyInfo.sNewCatName)
+                
+                
+                If catIDdst > 0 Then
+                
+                    updateTableInBase cn_data, "i_catalog", "dsDrawingsID", dsID, "catID", catIDdst
+                
+                    
+                    Dim pntkey As String
+                    pntkey = nd.parent.KEY
+    
+                    tvCats.Nodes.Remove nd.KEY
+    
+                    Dim ndNew As Node
+                    Set ndNew = tvCats.Nodes.Add(pntkey, tvwChild, "catalog" & catIDdst, copyInfo.sNewCatName, ndprev.Image)
+        
+                    ndNew.Tag = "catalog"
+                    Call writeOperationS(operCreate, "catalog", catIDdst, "создание версии")
+                
+                
+                    setCatlistDefault catIDsrc, catIDdst
+                
+                    selectTreeNode "catalog" & catIDdst, tvCats
+                
+                End If
+                
+                
+                Me.MousePointer = 0
+            
+            
+            
+            
+            
+                ' get parent
+'                If getNodeIds(nd.parent, objID, catIDsrc, False) Then
+'                    catIDdst = copyCatalog2(catIDsrc, objID, ct.catID, , , , , nd.text)
+'                End If
+            
+
+                
+            End If
+            
+            
+        End If
+
+    Else
+        Exit Sub
+    End If
+    
+    
+    
+
+Exit Sub
+
+mnuCatsTreePWVers_Click_ERR:
+    Me.MousePointer = 0
+    'MsgBox "[" & err.Number & "] " & err.Description, vbCritical, "mnuCatsTreePWVers_Click - Error"
+
+End Sub
 
 
 
@@ -22236,6 +22683,8 @@ cnt:
             
             Set fc = New frmCopy
             
+            'fc.checkListCopyEnabled ct.catID
+            
             fc.txtSrcName.text = copyInfo.sOldCatName
             fc.txtDstName.text = copyInfo.sNewCatName
             If cCats.Count > 1 Then fc.txtDstName.Enabled = False
@@ -22308,6 +22757,8 @@ cnt:
         ElseIf cCats.Count = 0 And cParts.Count > 0 Then
         
             Set fc = New frmCopy
+            
+            'fc.checkListCopyEnabled lngCurCatalogIDtoCopy
             
             If cParts.Count = 1 Then
                 fc.txtSrcName.text = cParts(1).partName
@@ -22428,14 +22879,14 @@ Public Sub tbOfftake_ButtonClick(ByVal Button As MSComctlLib.Button)
             
         Case "Nulls"
         
-'            loadOfftake False
-            If iLastOfftMode = 1 Then
-                loadOfftakeVed True
-            ElseIf iLastOfftMode = 2 Then
-                'loadOfftakeBet ' без реакции
-            Else
-                loadOfftake False
-            End If
+            ''loadOfftake False
+            'If iLastOfftMode = 1 Then
+            '    loadOfftakeVed True
+            'ElseIf iLastOfftMode = 2 Then
+            '    'loadOfftakeBet ' без реакции
+            'Else
+            '    loadOfftake False
+            'End If
             
             
         Case "Excel"
@@ -22641,30 +23092,37 @@ Private Sub tbOfftake_ButtonMenuClick(ByVal ButtonMenu As MSComctlLib.ButtonMenu
 
     Select Case ButtonMenu.KEY
         
-        Case "Offt_st"
+        Case "Offt_st" ' Расчёт - Стандартно
 
             loadOfftake False
             Exit Sub
         
-        Case "Offt_in"
+        Case "Offt_in" ' Расчёт - Объединить по первому столбцу
 
             loadOfftake False, True
             Exit Sub
 
-        Case "InclChildren" ' Beton
+        Case ""
+
+            loadOfftake4 lngCurCatListID, ButtonMenu.Tag
+            
+            'loadOfftake False, True
+            Exit Sub
+
+        Case "InclChildren" ' Бетон - С учетом подкаталогов
 
             loadOfftakeBet True
             Exit Sub
 
-        Case "Draw_st"
+        Case "Draw_st"  ' Отрисовка - Общая
         
             loadOfftake False
             
-        Case "Draw_in"
+        Case "Draw_in" ' Отрисовка - Разделенная
         
             loadOfftake True
             
-        Case "NoPass"
+        Case "NoPass" ' В.О.Р. - Без учета пассивности (для проверки массы)
         
             loadOfftakeVed False
             Exit Sub
@@ -22757,6 +23215,23 @@ Private Sub tbPart_ButtonClick(ByVal Button As MSComctlLib.Button)
             If left(n.KEY, 4) <> "part" Then Exit Sub
             
             ID = Val(right(n.KEY, Len(n.KEY) - Len("part")))
+            
+            
+            If ID > 0 And lngCurBuildingID = 307 Then ' eldabaa uja
+            
+                Me.Refresh
+                
+                Me.MousePointer = 11
+                
+                specPart2 ID
+                
+                Me.MousePointer = 0
+            
+                Exit Sub
+            
+            End If
+        
+        
         
             Dim f As New frmSpecParams
             If Len(f.txtTextHeight.text) = 0 Then f.txtTextHeight.text = 2.6
@@ -26592,6 +27067,51 @@ Private Sub tvCats_MouseDown(Button As Integer, Shift As Integer, X As Single, Y
             mnuCatsTreeReload.Visible = False
         ElseIf (left(nd.Tag, Len("docset"))) = "docset" Then
         
+            Dim objID As Long
+            Dim catIDsrc As Long
+            
+            Dim ndprev As Node
+
+            Set ndprev = nd.Previous
+    
+            Dim bEnabled1 As Boolean
+            Dim bEnabled2 As Boolean
+            
+            Dim ctsrc As clsCat
+            
+            If lngCurCatalogIDtoCopy > 0 Then
+                Set ctsrc = cCats(CStr(lngCurCatalogIDtoCopy))
+            End If
+
+            If Not ndprev Is Nothing Then
+            
+                If left(ndprev.KEY, 7) = "catalog" And left(nd.KEY, 6) = "docset" Then
+                
+                    getNodeIds ndprev, objID, catIDsrc, False
+
+                    Set ct = cCats(CStr(catIDsrc))
+                
+                    Dim iVers As Integer
+                    Dim iVersPrev As Integer
+                
+                    iVersPrev = ct.getVersNumFromName(ndprev.text)
+                    iVers = ct.getVersNumFromName(nd.text)
+                    
+                    bEnabled1 = CBool(iVersPrev + 1 = iVers)
+                        
+                End If
+                
+            End If
+            
+            
+            If Not ctsrc Is Nothing Then
+                mnuCatsTreePWBuf.Caption = "Копия " & ctsrc.catName
+                bEnabled2 = True
+            End If
+    
+            mnuCatsTreePWVers.Enabled = bEnabled1
+            mnuCatsTreePWBuf.Visible = bEnabled2
+            
             PopupMenu mnuCatsTreePW
             
             Exit Sub
@@ -28851,7 +29371,7 @@ Private Sub tvSrtm_NodeClick(ByVal Node As MSComctlLib.Node)
         strSQL = strSQL & " FROM view_r_material_standard where matUsing = 1"
         strSQL = strSQL & " ORDER by stdFullNumber, matSortNumber"
         
-        RS.Open strSQL, cn_srtm, adOpenStatic, adLockReadOnly
+        RS.Open strSQL, cn_srtm, adOpenForwardOnly, adLockReadOnly
         Set Me.fgSrtmPos.DataSource = RS
         
         RS.Close
@@ -29634,7 +30154,7 @@ End Function
 
 '/******************************************************************************
 Private Function copyCatalog2(objectID As Long, objID As Long, lngCatIDtoCopy As Long, _
-                            Optional bReserved As Boolean = False, _
+                            Optional docsetID As Long = 0, _
                             Optional sParentNodeKey As String = "", _
                             Optional sNodeImage As String = "", _
                             Optional bCopyReinChildCats As Boolean = True, _
@@ -29685,7 +30205,7 @@ Private Function copyCatalog2(objectID As Long, objID As Long, lngCatIDtoCopy As
     
     If catNewID = 0 Then GoTo exitf
     
-    
+   
 '    strSQL = generateCopySql("catID", CStr(lngCatIDtoCopy), False, strDstPrefix, strSrcPrefix, catNewID)
     
    
@@ -37239,5 +37759,458 @@ err:
 
 
 End Sub
+
+
+
+'/******************************************************************************
+Private Sub loadGroupElements(dm As ModelReference, sGrName As String, pUser As Point3d, ByRef pShift As Point3d, _
+                            ByRef elems() As Element, Optional curprt As clsPart = Nothing, Optional curPos As clsPos = Nothing)
+'/******************************************************************************
+
+    On Error GoTo loadGroupElements_ERR
+
+
+    writeToLogFile "loadGroupElements() " & sGrName
+
+
+    Dim pp As LineElement
+    Dim ele As Element
+    Dim el As Element
+    Dim ee_ As ElementEnumerator
+    Dim ee As ElementEnumerator
+    Dim tm As Transform3d
+        
+    Dim pMove As Point3d
+    Dim pShiftLocal As Point3d
+    pShiftLocal = pShift
+        
+    If dm Is Nothing Then Exit Sub
+    
+    Dim ng0 As NamedGroupElement
+    
+    writeToLogFile "GetNamedGroup"
+    Set ng0 = dm.GetNamedGroup(sGrName)
+
+
+    'Dim ngms() As NamedGroupMember
+    
+    writeToLogFile "GetElements 1"
+    'ngms = ng0.GetMembers
+    
+    
+    Set ee_ = ng0.GetElements(True, msdMemberTraverseEnumerate)
+
+    Do While ee_.MoveNext
+    
+        If ee_.Current.IsGraphical Then
+        
+            writeToLogFile "ee.Current"
+            Set ele = ee_.Current
+        
+        
+            writeToLogFile "ele.Level.Name = " & ele.Level.Name
+        
+            If ele.Level.Name = "point left top" Then
+            
+                Set pp = ele.AsLineElement
+                
+                pMove = Point3dSubtract(pUser, pp.StartPoint)
+            
+            ElseIf ele.Level.Name = "point left bottom" Then
+            
+                Set pp = ele.AsLineElement
+                
+                pShift = Point3dSubtract(pUser, pp.StartPoint)
+            
+            End If
+    
+        End If
+    Loop
+   
+   
+'    Dim i As Integer
+'    For i = LBound(ngms) To UBound(ngms)
+'        With ngms(i)
+'
+'            writeToLogFile "GetElement"
+'            Set ele = .GetElement
+'
+'
+'
+'        End With
+'    Next
+    
+    pShift = Point3dSubtract(pMove, pShift)
+    pShift = Point3dAdd(pShift, pShiftLocal)
+
+            
+    writeToLogFile "GetElements 2"
+    Set ee = ng0.GetElements(True, msdMemberTraverseEnumerate)
+    
+    Do While ee.MoveNext
+    
+        If ee.Current.IsGraphical Then
+        
+            writeToLogFile "ee.Current.Clone"
+            Set el = ee.Current.Clone
+                
+            If Not (el.Level.Name = "point left top" Or el.Level.Name = "point left bottom") Then
+            
+                If el.IsTextElement Then
+                    Dim txt As TextElement
+                    Set txt = el.AsTextElement
+                    
+                    If Not curPos Is Nothing Then
+                        txt.text = Replace(txt.text, "[N]", CStr(curPos.posNumber))
+                        'txt.text = Replace(txt.text, "[D]", CStr(curpos.))
+                        txt.text = Replace(txt.text, "[PD]", getTrans(curPos.POS_PD_NAME, , 2))
+                        txt.text = Replace(txt.text, "[PN]", getTrans(curPos.POS_SRTM.srtmName, , 3)) ' 3 - побуквенная транслитерация
+                        txt.text = Replace(txt.text, "[STD]", curPos.POS_STD.FULLNUMBER_TRANSLATED)
+                        txt.text = Replace(txt.text, "[MAT]", getTrans(curPos.POS_MAT.matName, , 2))
+                        txt.text = Replace(txt.text, "[NMAT]", curPos.posNote) ' from xml config
+                        txt.text = Replace(txt.text, "[MSTD]", curPos.POS_MAT.MAT_STD.FULLNUMBER_TRANSLATED)
+                        txt.text = Replace(txt.text, "[LEN]", Format(curPos.getPosLengthSimple(), "0"))
+                        txt.text = Replace(txt.text, "[Q]", curPos.posQty)
+                        txt.text = Replace(txt.text, "[UM]", Replace(curPos.POS_UMASS, ",", ".")) '
+                        If curPos.pos_props.existsProperty("width") Then txt.text = Replace(txt.text, "[WDT]", curPos.pos_props("width").PVAL)
+                        If curPos.pos_props.existsProperty("thickness") Then txt.text = Replace(txt.text, "[THK]", curPos.pos_props("thickness").PVAL)
+                    End If
+                    
+                    If Not curprt Is Nothing Then
+                        txt.text = Replace(txt.text, "[PRT]", curprt.partName)
+                        txt.text = Replace(txt.text, "[PRTM]", Replace(Format(curprt.PART_CMASS, "0.0"), ",", "."))
+                    End If
+                    
+                End If
+                
+                tm = Transform3dFromPoint3d(Point3dAdd(pMove, pShiftLocal))
+                el.Transform tm
+                
+    
+                
+                If elems(0) Is Nothing Then
+                    If Not curprt Is Nothing Then el.GraphicGroup = curprt.partIDold
+                    writeToLogFile "ActiveModelReference.AddElement"
+                    ActiveModelReference.AddElement el
+                Else
+                    Dim cnt As Integer
+                    cnt = UBound(elems)
+                    cnt = cnt + 1
+                    ReDim Preserve elems(0 To cnt)
+                    Set elems(cnt) = el
+                End If
+            
+            End If
+        
+            
+        End If
+    
+        
+    Loop
+
+Exit Sub
+
+loadGroupElements_ERR:
+    'Resume Next
+    MsgBox "[" & err.Number & "] " & err.Description, vbCritical, "loadGroupElements - Error"
+
+End Sub
+
+
+'/******************************************************************************
+Private Sub loadSpecPart2(part As clsPart, ByRef cel As CellElement)
+'/******************************************************************************
+
+    On Error GoTo loadSpecPart2_ERR
+    
+    Dim msapp As Object
+    
+    Set msapp = getMS
+    
+    If msapp Is Nothing Then
+        
+'        F1.SB.Panels("status").text = "Откройте требуемый файл"
+        Call MsgBox("Откройте требуемый файл и выполните команду заново", vbOK, "")
+        
+        Exit Sub
+        
+    End If
+    
+        
+    Dim p As Point3d
+    Dim pMove As Point3d
+    Dim pShift As Point3d
+    
+    
+        
+    Dim strDgnFile As String
+    Dim strModel As String
+    strDgnFile = strDrawingsLibraryFileName
+    strModel = "spec_embpart_ed_eng"
+
+    writeToLogFile strDgnFile
+    writeToLogFile strModel
+
+
+
+    Dim dfsource As DesignFile
+    
+    writeToLogFile "OpenDesignFileForProgram"
+    Set dfsource = msapp.OpenDesignFileForProgram(strDgnFile, True)
+    
+'    If err.Number > 0 Then
+'        MsgBox "Error open file"
+'        Exit Sub
+'    End If
+    
+    
+    Dim dm As ModelReference
+    writeToLogFile "dfsource.Models(strModel)"
+    Set dm = dfsource.Models(strModel)
+    
+'    If err.Number > 0 Then
+'        MsgBox "Error open model in library file"
+'        Exit Sub
+'    End If
+
+    
+
+
+    
+    
+    
+'    Dim Message As CadInputMessage
+'    Set Message = msapp.CadInputQueue.GetInput(msdCadInputTypeDataPoint, msdCadInputTypeReset)
+'
+'    If Message.InputType = msdCadInputTypeDataPoint Then
+'        p = Message.Point
+'    Else
+'        Exit Sub
+'    End If
+    
+    'StartBusyCursor
+    
+    
+    Dim elems() As Element
+    ReDim elems(0)
+    Set elems(0) = CreateLineElement2(Nothing, p, p)
+    
+    
+    
+    
+    
+    loadGroupElements dm, "head", p, pShift, elems, part
+    
+    loadGroupElements dm, "parts", p, pShift, elems, part
+    
+    Dim pos As clsPos
+    Dim pnum As Integer
+    
+    pnum = 0
+    For Each pos In part.ps.pm
+        pnum = pnum + 1
+        pos.posNumber = pnum
+        
+        If pos.POS_PD.pdID = 1 Then
+            loadGroupElements dm, "parts_pos_1", p, pShift, elems, part, pos
+        ElseIf pos.POS_PD.pdID = 8 Then
+            loadGroupElements dm, "parts_pos_8", p, pShift, elems, part, pos
+        Else
+            loadGroupElements dm, "parts_pos", p, pShift, elems, part, pos
+        End If
+        
+        'If pos.POS_SRTM.srtmID < 0 Then
+        '    Dim pospart As New clsPart
+        '    If pospart.setIDv2(-pos.POS_SRTM.srtmID, False, False, False) Then
+        '        pospart.partQty = pos.posQty
+        '        pospart.massCommon = pos.posUMass
+        '        qty = spunit.addCmnSpecPartRows(pospart)
+        '    End If
+        '    Set pospart = Nothing
+        'Else
+        '    qty = spunit.addCmnSpecPosRows(pos, spt)
+        'End If
+    Next pos
+    
+    
+    
+    If part.ps.pe.Count > 0 Then loadGroupElements dm, "mat", p, pShift, elems, part
+    
+    For Each pos In part.ps.pe
+        'qty = spunit.addCmnSpecPosRows(pos, spt)
+        
+        Dim X As colAts
+        
+        pos.posNote = ""
+        For Each X In speccfg("Electrodes")
+            If X.attval("name") = pos.POS_SRTM.srtmName And Len(X.attval("material")) > 0 Then
+                pos.posNote = X.attval("material")
+            End If
+        Next
+        
+        If Len(pos.posNote) > 0 Then
+            loadGroupElements dm, "mat_pos_n", p, pShift, elems, part, pos
+        Else
+            loadGroupElements dm, "mat_pos", p, pShift, elems, part, pos
+        End If
+
+        
+    Next pos
+            
+            
+            
+
+    loadGroupElements dm, "bottom", p, pShift, elems, part
+    
+    Dim dScale As Double
+    dScale = ActiveModelReference.UORsPerMasterUnit / dm.UORsPerMasterUnit
+    
+    If ActiveSettings.AnnotationScaleEnabled Then
+        dScale = dScale * ActiveModelReference.GetSheetDefinition.AnnotationScaleFactor
+    End If
+    
+    
+    'StopBusyCursor
+    
+    
+    If Not elems(0) Is Nothing Then
+    
+        Set cel = CreateCellElement1("spec", elems, p, False)
+        
+        cel.ScaleAll p, dScale, dScale, dScale
+    
+    End If
+        
+Exit Sub
+
+loadSpecPart2_ERR:
+    'StopBusyCursor
+    MsgBox "[" & err.Number & "] " & err.Description, vbCritical, "loadSpecPart2 - Error"
+    'Resume Next
+
+End Sub
+
+
+'/******************************************************************************
+Private Sub specPart2(partID As Long)
+'/******************************************************************************
+
+    On Error GoTo specPart2_ERR
+
+
+    bLogGlobal = CBool(Val(speccfg("Log").attval("active")))
+
+
+    writeToLogFile "specPart2()", True
+
+    Dim hwnd As Long
+    Dim hwnd2 As Long
+    writeToLogFile "FindWindow"
+    hwnd = FindWindow("MstnTop", vbNullString)
+        
+    If hwnd = 0 Then
+        MsgBox "Не удалось обнаружить запущенное прилоежение для размещения таблицы" & vbNewLine & _
+                "Запустите приложение платформы MicroStation, откройте файл, затем заново запустите команду", vbExclamation
+                
+        Exit Sub
+    End If
+    
+    Dim msapp As Object
+    Set msapp = getMS
+    If msapp Is Nothing Then MsgBox sCommonMessage: Exit Sub
+    
+    writeToLogFile "UpdateGraphicGroupNumber"
+    msapp.UpdateGraphicGroupNumber
+
+    writeToLogFile "getMSWindowH"
+    hwnd2 = getMSWindowH(msapp)
+
+    If hwnd2 > 0 Then hwnd = hwnd2
+    
+    
+    Dim part As New clsPart
+    writeToLogFile "part.setIDv2"
+    part.setIDv2 partID, True, True, False
+    
+    
+    part.partIDold = msapp.CurrentGraphicGroup
+    
+    
+    Dim cel As CellElement
+    
+    writeToLogFile "loadSpecPart2"
+    
+    '=======================
+    loadSpecPart2 part, cel
+    '=======================
+
+
+    If Not cel Is Nothing Then
+    
+        ActiveModelReference.AddElement cel
+        
+        ActiveModelReference.SelectElement cel
+    
+        CadInputQueue.SendCommand "move"
+            
+        CadInputQueue.SendDataPoint Point3dZero
+        
+        Dim rtc As Long
+        writeToLogFile "SetForegroundWindow"
+        rtc = SetForegroundWindow(hwnd)
+        
+    
+        Dim Message As CadInputMessage
+        Set Message = msapp.CadInputQueue.GetInput(msdCadInputTypeDataPoint, msdCadInputTypeReset)
+        
+    
+        If Message.InputType = msdCadInputTypeDataPoint Then
+            CadInputQueue.SendDataPoint Message.Point
+            CadInputQueue.SendReset
+            ActiveModelReference.UnselectAllElements
+        ElseIf Message.InputType = msdCadInputTypeReset Then
+            CadInputQueue.SendReset
+            ActiveModelReference.UnselectAllElements
+            ActiveModelReference.RemoveElement cel
+        End If
+    
+    End If
+        
+    
+
+
+
+
+
+'    Set spec = New clsSG
+
+'    If getSpecParams(curSpecCfg) Then
+'
+'        Me.MousePointer = 0
+'
+'        If MsgBox("После нажатия кнопки ОК Вы будете переведены в приложение для размещения таблицы" & vbNewLine & _
+'                "Укажите левую верхнюю точку таблицы нажатием левой кнопки мыши", vbOKCancel, "") = vbCancel Then Exit Sub
+'
+'        Dim rtc As Long
+'        rtc = SetForegroundWindow(hwnd)
+'        loadSpecPart2
+'    Else
+'
+'        Me.MousePointer = 0
+'
+'        MsgBox "Не удалось получить параметры шаблона таблицы" & vbNewLine & "Для решения проблемы обратитесь к администраторам", vbCritical, ""
+'        Exit Sub
+'    End If
+
+
+
+Exit Sub
+
+specPart2_ERR:
+
+    MsgBox "[" & err.Number & "] " & err.Description, vbCritical, "specPart2 - Error"
+
+End Sub
+
 
 

@@ -42,11 +42,11 @@ Public Function getClass(Optional bNew As Boolean = True, Optional bOld As Boole
     
     Dim str As String
     
-    If usrCurrent.depID = 3 Then
-    
-        getClass = ARM_CLASS.armClassOldName
-        
-    Else
+'    If usrCurrent.depID = 3 Then
+'
+'        getClass = ARM_CLASS.armClassOldName
+'
+'    Else
     
         If bNew And Not bOld Then
             getClass = ARM_CLASS.armClassName
@@ -69,7 +69,7 @@ Public Function getClass(Optional bNew As Boolean = True, Optional bOld As Boole
         End If
     
         
-    End If
+'    End If
     
     
     

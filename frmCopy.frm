@@ -139,6 +139,42 @@ Attribute VB_Exposed = False
 Option Explicit
 
 '/******************************************************************************
+Public Function checkListCopyEnabled(catID As Long) As Boolean
+'/******************************************************************************
+
+    On Error GoTo checkListCopyEnabled_ERR
+    
+    checkListCopyEnabled = False
+    
+    Dim cnt As Long
+    cnt = selectLongFromBase(cn_data, "view_catlist", "count(*)", "catID", catID)
+    
+    ' копирование каталого со списками где есть значения r_catlist_position временно не работает (пока не сделано)
+    
+    If cnt = 0 Then
+        checkListCopyEnabled = True
+    Else
+        chkLists.Value = 0
+        chkLists.Enabled = False
+        
+        chkListContent.Value = 0
+        chkListContent.Enabled = False
+        
+        chkRedirect.Value = 0
+        chkRedirect.Enabled = False
+        
+    End If
+
+Exit Function
+
+checkListCopyEnabled_ERR:
+    checkListCopyEnabled = False
+    'MsgBox "[" & err.Number & "] " & err.Description, vbCritical, "checkListCopyEnabled - Error"
+
+End Function
+
+
+'/******************************************************************************
 Private Sub btnCancel_Click()
 '/******************************************************************************
 
@@ -155,7 +191,7 @@ btnCancel_Click_ERR:
 End Sub
 
 '/******************************************************************************
-Private Sub btnOK_Click()
+Private Sub btnOk_Click()
 '/******************************************************************************
 
 
@@ -205,10 +241,7 @@ Private Sub Form_Load()
     chkLists.Value = GetSetting("Offtake2", "frmCopy", "chkLists.Value", True)
     chkListContent.Value = GetSetting("Offtake2", "frmCopy", "chkListContent.Value", True)
     chkReinChilds.Value = GetSetting("Offtake2", "frmCopy", "chkReinChilds.Value", True)
-
-
-
-
+    chkRedirect.Value = GetSetting("Offtake2", "frmCopy", "chkRedirect.Value", True)
 
 
 Exit Sub
@@ -234,9 +267,9 @@ Private Sub Form_Unload(Cancel As Integer)
 
     If chkLists.Enabled Then Call SaveSetting("Offtake2", "frmCopy", "chkLists.Value", chkLists.Value)
     If chkListContent.Enabled Then Call SaveSetting("Offtake2", "frmCopy", "chkListContent.Value", chkListContent.Value)
-    
     If chkLinks.Enabled Then Call SaveSetting("Offtake2", "frmCopy", "chkLinks.Value", chkLinks.Value)
     If chkReinChilds.Enabled Then Call SaveSetting("Offtake2", "frmCopy", "chkReinChilds.Value", chkReinChilds.Value)
+    If chkRedirect.Enabled Then Call SaveSetting("Offtake2", "frmCopy", "chkRedirect.Value", chkRedirect.Value)
 
 
 Exit Sub
